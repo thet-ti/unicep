@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/dist", "!**/coverage", "!**/.turbo", "!pnpm-lock.yaml"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/coverage",
+      "!**/.turbo",
+      "!pnpm-lock.yaml",
+      "!.changeset/*.md"
+    ]
   },
   "formatter": {
     "enabled": true,
