@@ -3,6 +3,24 @@
   "version": "0.0.0",
   "description": "Angular (signals and RxJS) bindings for @unicep/core",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thet-ti/unicep.git",
+    "directory": "packages/angular"
+  },
+  "homepage": "https://github.com/thet-ti/unicep#readme",
+  "bugs": {
+    "url": "https://github.com/thet-ti/unicep/issues"
+  },
+  "keywords": [
+    "cep",
+    "brazil",
+    "postal-code",
+    "viacep",
+    "brasilapi",
+    "circuit-breaker",
+    "fallback"
+  ],
   "type": "module",
   "sideEffects": false,
   "files": [

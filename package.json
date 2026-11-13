@@ -3,6 +3,14 @@
   "private": true,
   "description": "Unified Brazilian CEP lookup with automatic provider fallback",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thet-ti/unicep.git"
+  },
+  "homepage": "https://github.com/thet-ti/unicep#readme",
+  "bugs": {
+    "url": "https://github.com/thet-ti/unicep/issues"
+  },
   "type": "module",
   "packageManager": "pnpm@11.24.0",
   "engines": {
