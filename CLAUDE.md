@@ -49,13 +49,13 @@ open-source npm library.
 
 ## Package layout (pnpm workspaces + Turborepo)
 
-| Package | Purpose |
-| --- | --- |
-| `@unicep/core` | Pure TS: `Unicep` class, `Address` type, providers, errors |
-| `@unicep/react` | `useCep` hook |
-| `@unicep/vue` | `useCep` composable |
-| `@unicep/angular` | Injectable service (RxJS / signals) |
-| `@unicep/server` | Optional backend helpers (Express / Nest) |
+| Package           | Purpose                                                    |
+| ----------------- | ---------------------------------------------------------- |
+| `@unicep/core`    | Pure TS: `Unicep` class, `Address` type, providers, errors |
+| `@unicep/react`   | `useCep` hook                                              |
+| `@unicep/vue`     | `useCep` composable                                        |
+| `@unicep/angular` | Injectable service (RxJS / signals)                        |
+| `@unicep/server`  | Optional backend helpers (Express / Nest)                  |
 
 ## Tech decisions
 
@@ -72,14 +72,14 @@ open-source npm library.
 
 ```ts
 interface Address {
-  cep: string;          // 8 digits, no mask
+  cep: string; // 8 digits, no mask
   street: string;
   complement?: string;
   neighborhood: string;
   city: string;
-  state: string;        // UF, e.g. "SP"
+  state: string; // UF, e.g. "SP"
   ibgeCode?: string;
-  provider: string;     // which provider answered
+  provider: string; // which provider answered
 }
 ```
 
