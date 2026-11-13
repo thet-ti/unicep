@@ -1,4 +1,5 @@
 export { formatCep, isValidCep, normalizeCep } from './cep';
+export { getDefaultUnicep } from './default';
 export {
   AllProvidersFailedError,
   CepNotFoundError,
