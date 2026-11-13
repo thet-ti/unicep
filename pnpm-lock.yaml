@@ -36,6 +36,40 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  packages/angular:
+    dependencies:
+      '@unicep/core':
+        specifier: workspace:^
+        version: link:../core
+    devDependencies:
+      '@angular/common':
+        specifier: ^22.2.6
+        version: 22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/compiler':
+        specifier: ^22.2.6
+        version: 22.2.6
+      '@angular/core':
+        specifier: ^22.2.6
+        version: 22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)
+      '@angular/platform-browser':
+        specifier: ^22.2.6
+        version: 22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))
+      '@vitest/coverage-v8':
+        specifier: 5.1.0
+        version: 5.1.0(vitest@5.1.0)
+      jsdom:
+        specifier: ^31.0.0
+        version: 31.0.0
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      tsup:
+        specifier: ^9.0.0
+        version: 9.0.0(jiti@2.7.0)(postcss@8.5.32)(typescript@6.0.3)(yaml@2.9.1)
+      vitest:
+        specifier: ^5.1.0
+        version: 5.1.0(@vitest/coverage-v8@5.1.0)(jsdom@31.0.0)(vite@8.3.8(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+
   packages/core:
     dependencies:
       cockatiel:
@@ -109,6 +143,41 @@ packages:
 
   '@andrewbranch/untar.js@1.0.4':
     resolution: {integrity: sha512-pVXSwPsLuw8IGLo2Di0EaOfsk+ntVvpkk942J/sHYIkwvtKUakEcPh7HBgZ6tuimgzKSEHgCvO4XgQ05DEbwDw==}
+
+  '@angular/common@22.2.6':
+    resolution: {integrity: sha512-wL7qv2fb/qWIDhq6leX3SFGql76ljCPC6qXHB2KpKJ3GlppuF9fYJwLo+RicRyM72nFu9qQPzd9Zl9k3/eUisQ==}
+    engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
+    peerDependencies:
+      '@angular/core': 22.2.6
+      rxjs: ^6.5.3 || ^7.4.0
+
+  '@angular/compiler@22.2.6':
+    resolution: {integrity: sha512-9QNqLAG+bqsTRDZZbggX50sS9NyWx3ACfgeLKUAaHPzebQXtIsAYIT6H8HNpR27GHJ2qJHi9yEm84hAJsKZCuQ==}
+    engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
+
+  '@angular/core@22.2.6':
+    resolution: {integrity: sha512-atESNSPsM0dBXU88aDtByBP4W/wb8USbhL16lsePyxBvAWtM1Xn7QBB489QTmHpY6VCXHnqMhXWcrZsDpoIBsw==}
+    engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
+    peerDependencies:
+      '@angular/compiler': 22.2.6
+      rxjs: ^6.5.3 || ^7.4.0
+      zone.js: ~0.15.0 || ~0.16.0
+    peerDependenciesMeta:
+      '@angular/compiler':
+        optional: true
+      zone.js:
+        optional: true
+
+  '@angular/platform-browser@22.2.6':
+    resolution: {integrity: sha512-xXSgdnnLLv/3aEC/pqyrUd0xlyYURGZG2HR3sOIN3bsIoctGFvzA5iwt/GEKpIDA1rn+NnKNLK/EKQaPA4YZEw==}
+    engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
+    peerDependencies:
+      '@angular/animations': 22.2.6
+      '@angular/common': 22.2.6
+      '@angular/core': 22.2.6
+    peerDependenciesMeta:
+      '@angular/animations':
+        optional: true
 
   '@arethetypeswrong/cli@0.18.5':
     resolution: {integrity: sha512-gM+8vRsQOD/Uc7EnBedUhkG5OCsDWE4uoak5QvomGpMpaky0Eh41p04nIMgrWb8EOmqZUJGc6zz9hsP6E56R7g==}
@@ -1623,6 +1692,9 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
+  rxjs@7.8.2:
+    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
+
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -1947,6 +2019,29 @@ packages:
 snapshots:
 
   '@andrewbranch/untar.js@1.0.4': {}
+
+  '@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))(rxjs@7.8.2)':
+    dependencies:
+      '@angular/core': 22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)
+      rxjs: 7.8.2
+      tslib: 2.9.1
+
+  '@angular/compiler@22.2.6':
+    dependencies:
+      tslib: 2.9.1
+
+  '@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)':
+    dependencies:
+      rxjs: 7.8.2
+      tslib: 2.9.1
+    optionalDependencies:
+      '@angular/compiler': 22.2.6
+
+  '@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))':
+    dependencies:
+      '@angular/common': 22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)
+      tslib: 2.9.1
 
   '@arethetypeswrong/cli@0.18.5':
     dependencies:
@@ -3308,6 +3403,10 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.68.2
       fsevents: 2.3.3
 
+  rxjs@7.8.2:
+    dependencies:
+      tslib: 2.9.1
+
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
@@ -3413,8 +3512,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  tslib@2.9.1:
-    optional: true
+  tslib@2.9.1: {}
 
   tsup@9.0.0(jiti@2.7.0)(postcss@8.5.32)(typescript@6.0.3)(yaml@2.9.1):
     dependencies:
