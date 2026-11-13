@@ -94,6 +94,7 @@ interface Address {
 
 1. Repo bootstrap: pnpm, Turborepo, TS config, Biome, commitlint, husky, Vitest, CI.
 2. `@unicep/core`: types, errors, CEP validation, circuit-breaker orchestration.
-3. Providers: ViaCEP, BrasilAPI, IBGE, then others (OpenCEP, AwesomeAPI, ...).
+3. Providers: ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI are done. IBGE has no CEP lookup
+   endpoint (only localities), so it is not a provider. Candidates: Correios (needs auth), others.
 4. Framework bindings: React, Vue, Angular, server.
 5. Docs site, README, CONTRIBUTING, release automation (changesets), npm publish.
