@@ -26,9 +26,16 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "check:package": "publint && attw --pack . --profile node16"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "5.1.0",
     "tsup": "^9.0.0",
     "vitest": "^5.1.0"
   },
