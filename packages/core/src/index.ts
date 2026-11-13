@@ -7,6 +7,14 @@ export {
   ProviderError,
   UnicepError,
 } from './errors';
+export {
+  awesomeApi,
+  brasilApi,
+  defaultProviders,
+  type HttpProviderOptions,
+  openCep,
+  viaCep,
+} from './providers';
 export type {
   Address,
   CepProvider,
