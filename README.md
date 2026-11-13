@@ -7,17 +7,48 @@ fallback powered by circuit breakers.
 
 ## Why
 
-Public CEP services (ViaCEP, BrasilAPI, IBGE, ...) go down from time to time. `unicep` queries
+Public CEP services (ViaCEP, BrasilAPI, OpenCEP, ...) go down from time to time. `unicep` queries
 several providers behind a single interface, detects failing services with circuit breakers and
 transparently falls back to the next one, always returning the same normalized `Address`.
 
 ## Packages
 
-| Package                         | Description                                               |
-| ------------------------------- | --------------------------------------------------------- |
-| [`@unicep/core`](packages/core) | Framework-agnostic TypeScript core and built-in providers |
+| Package                               | Description                                               |
+| ------------------------------------- | --------------------------------------------------------- |
+| [`@unicep/core`](packages/core)       | Framework-agnostic TypeScript core and built-in providers |
+| [`@unicep/react`](packages/react)     | `useCep` hook (React 18+)                                 |
+| [`@unicep/vue`](packages/vue)         | `useCep` composable (Vue 3)                               |
+| [`@unicep/angular`](packages/angular) | `injectCep` signals, `lookupCep` observable               |
 
-React, Vue, Angular and server bindings are planned.
+## Usage
+
+```ts
+import { Unicep, defaultProviders } from '@unicep/core';
+
+const unicep = new Unicep({ providers: defaultProviders() });
+const address = await unicep.lookup('01310-100');
+// { cep: '01310100', street: 'Avenida Paulista', city: 'São Paulo', state: 'SP', provider: 'viacep', ... }
+```
+
+Framework bindings look up automatically once the value is a valid CEP:
+
+```tsx
+// React
+const { data, error, isLoading } = useCep(value);
+```
+
+```ts
+// Vue
+const { data, error, isLoading } = useCep(value); // value: ref or getter
+```
+
+```ts
+// Angular (in an injection context)
+readonly cep = injectCep(() => this.value());
+```
+
+All bindings use a shared default instance with the built-in providers. Pass `unicep` (or use
+`provideUnicep` in Angular) to customize providers, timeout or circuit breaker.
 
 ## Development
 

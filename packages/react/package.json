@@ -1,7 +1,7 @@
 {
   "name": "@unicep/react",
   "version": "0.0.0",
-  "description": "React (and Preact via preact/compat) hook for @unicep/core",
+  "description": "React hook for @unicep/core",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

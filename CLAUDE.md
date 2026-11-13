@@ -54,8 +54,10 @@ open-source npm library.
 | `@unicep/core`    | Pure TS: `Unicep` class, `Address` type, providers, errors |
 | `@unicep/react`   | `useCep` hook                                              |
 | `@unicep/vue`     | `useCep` composable                                        |
-| `@unicep/angular` | Injectable service (RxJS / signals)                        |
-| `@unicep/server`  | Optional backend helpers (Express / Nest)                  |
+| `@unicep/angular` | `injectCep` (signals), `lookupCep` (RxJS), `UNICEP` token  |
+
+There is no server package: `@unicep/core` is already usable on the backend. Bindings are thin,
+independent wrappers over the core (no shared UI runtime such as Preact). Angular bindings avoid decorators so they build with tsup instead of ng-packagr.
 
 ## Tech decisions
 
@@ -96,5 +98,5 @@ interface Address {
 2. `@unicep/core`: types, errors, CEP validation, circuit-breaker orchestration.
 3. Providers: ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI are done. IBGE has no CEP lookup
    endpoint (only localities), so it is not a provider. Candidates: Correios (needs auth), others.
-4. Framework bindings: React, Vue, Angular, server.
+4. Framework bindings: React, Vue, Angular (done).
 5. Docs site, README, CONTRIBUTING, release automation (changesets), npm publish.
