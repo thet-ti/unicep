@@ -90,6 +90,9 @@ interface Address {
 - Code, comments, docs and commit messages are in **English**.
 - Core must not import from any framework package or Node-only module.
 - Every provider needs unit tests with recorded/mocked responses.
+- Providers must work from browsers: the service has to send CORS headers (including on 404
+  "not found" answers) and the request must stay CORS-simple (only an `Accept` header, no
+  preflight). The four built-in providers were verified from a real browser.
 - Public API changes require a changeset and docs update.
 
 ## Roadmap
