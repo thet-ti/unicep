@@ -18,6 +18,7 @@ export {
 } from './providers';
 export type {
   Address,
+  CacheOptions,
   CepProvider,
   CircuitBreakerOptions,
   CircuitStatus,
@@ -25,6 +26,7 @@ export type {
   LookupOptions,
   ProviderAddress,
   ProviderStatus,
+  RetryOptions,
   UnicepOptions,
 } from './types';
 export { Unicep } from './unicep';

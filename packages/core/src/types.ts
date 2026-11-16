@@ -42,12 +42,33 @@ export interface CircuitBreakerOptions {
   resetTimeoutMs?: number;
 }
 
+export interface RetryOptions {
+  /**
+   * Extra attempts on the same provider after a failure, before falling back to the next one.
+   * Default: 0 (fallback only).
+   */
+  attempts?: number;
+  /** Delay before the first retry in milliseconds, doubled on each further retry. Default: 200. */
+  delayMs?: number;
+}
+
+export interface CacheOptions {
+  /** How long a successful lookup is reused, in milliseconds. Default: 300000 (5 minutes). */
+  ttlMs?: number;
+  /** Maximum number of cached CEPs; the least recently used is evicted first. Default: 500. */
+  maxEntries?: number;
+}
+
 export interface UnicepOptions {
   /** Providers in priority order. */
   providers: readonly CepProvider[];
-  /** Per-provider timeout in milliseconds. Default: 5000. */
+  /** Per-provider, per-attempt timeout in milliseconds. Default: 5000. */
   timeoutMs?: number;
   circuitBreaker?: CircuitBreakerOptions;
+  /** Retries failed providers before falling back. Disabled by default. */
+  retry?: RetryOptions;
+  /** Caches successful lookups in memory. Disabled by default. */
+  cache?: CacheOptions;
 }
 
 export interface LookupOptions {

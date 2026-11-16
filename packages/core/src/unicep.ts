@@ -6,6 +6,7 @@ import {
   circuitBreaker,
   handleWhen,
 } from 'cockatiel';
+import { TtlCache } from './cache';
 import { isValidCep, normalizeCep } from './cep';
 import {
   AllProvidersFailedError,
@@ -20,6 +21,7 @@ import type {
   CepProvider,
   CircuitStatus,
   LookupOptions,
+  ProviderAddress,
   ProviderStatus,
   UnicepOptions,
 } from './types';
@@ -27,6 +29,9 @@ import type {
 const DEFAULT_TIMEOUT_MS = 5_000;
 const DEFAULT_FAILURE_THRESHOLD = 3;
 const DEFAULT_RESET_TIMEOUT_MS = 30_000;
+const DEFAULT_RETRY_DELAY_MS = 200;
+const DEFAULT_CACHE_TTL_MS = 5 * 60_000;
+const DEFAULT_CACHE_MAX_ENTRIES = 500;
 
 interface ProviderEntry {
   provider: CepProvider;
@@ -40,6 +45,9 @@ interface ProviderEntry {
 export class Unicep {
   readonly #entries: readonly ProviderEntry[];
   readonly #timeoutMs: number;
+  readonly #retries: number;
+  readonly #retryDelayMs: number;
+  readonly #cache: TtlCache<Address> | undefined;
 
   constructor(options: UnicepOptions) {
     if (options.providers.length === 0) {
@@ -52,6 +60,21 @@ export class Unicep {
     }
 
     this.#timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.#retries = options.retry?.attempts ?? 0;
+    this.#retryDelayMs = options.retry?.delayMs ?? DEFAULT_RETRY_DELAY_MS;
+    if (!Number.isInteger(this.#retries) || this.#retries < 0) {
+      throw new RangeError('retry.attempts must be a non-negative integer');
+    }
+    if (options.cache) {
+      const ttlMs = options.cache.ttlMs ?? DEFAULT_CACHE_TTL_MS;
+      const maxEntries = options.cache.maxEntries ?? DEFAULT_CACHE_MAX_ENTRIES;
+      if (ttlMs <= 0) throw new RangeError('cache.ttlMs must be positive');
+      if (!Number.isInteger(maxEntries) || maxEntries < 1) {
+        throw new RangeError('cache.maxEntries must be a positive integer');
+      }
+      this.#cache = new TtlCache(ttlMs, maxEntries);
+    }
+
     const failureThreshold = options.circuitBreaker?.failureThreshold ?? DEFAULT_FAILURE_THRESHOLD;
     const halfOpenAfter = options.circuitBreaker?.resetTimeoutMs ?? DEFAULT_RESET_TIMEOUT_MS;
 
@@ -75,13 +98,18 @@ export class Unicep {
     const userSignal = options.signal;
     userSignal?.throwIfAborted();
 
+    const cached = this.#cache?.get(cep);
+    if (cached) return { ...cached };
+
     const failures: UnicepError[] = [];
     let notFound = 0;
 
     for (const { provider, breaker } of this.#entries) {
       try {
-        const address = await breaker.execute(() => this.#query(provider, cep, userSignal));
-        return { ...address, provider: provider.name };
+        const result = await breaker.execute(() => this.#query(provider, cep, userSignal));
+        const address: Address = { ...result, provider: provider.name };
+        this.#cache?.set(cep, address);
+        return { ...address };
       } catch (error) {
         if (userSignal?.aborted) throw userSignal.reason;
         if (error instanceof CepNotFoundError) {
@@ -112,11 +140,33 @@ export class Unicep {
     }));
   }
 
+  /** Clears the in-memory cache, if enabled. */
+  clearCache(): void {
+    this.#cache?.clear();
+  }
+
+  /** Queries one provider, retrying provider failures with exponential backoff. */
   async #query(
     provider: CepProvider,
     cep: string,
     userSignal: AbortSignal | undefined,
-  ): Promise<Omit<Address, 'provider'>> {
+  ): Promise<ProviderAddress> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await this.#attempt(provider, cep, userSignal);
+      } catch (error) {
+        // "Not found" and cancellations are final; only provider failures are retried.
+        if (!(error instanceof ProviderError) || attempt >= this.#retries) throw error;
+        await sleep(this.#retryDelayMs * 2 ** attempt, userSignal);
+      }
+    }
+  }
+
+  async #attempt(
+    provider: CepProvider,
+    cep: string,
+    userSignal: AbortSignal | undefined,
+  ): Promise<ProviderAddress> {
     const timeout = AbortSignal.timeout(this.#timeoutMs);
     const signal = userSignal ? AbortSignal.any([userSignal, timeout]) : timeout;
     try {
@@ -128,6 +178,22 @@ export class Unicep {
       throw new ProviderError(provider.name, undefined, { cause: error });
     }
   }
+}
+
+/** Resolves after `ms`, or rejects with the abort reason if the signal fires first. */
+function sleep(ms: number, signal: AbortSignal | undefined): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(signal.reason);
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal?.reason);
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
 }
 
 function toStatus(state: CircuitState): CircuitStatus {
