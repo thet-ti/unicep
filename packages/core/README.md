@@ -58,7 +58,7 @@ Providers are tried in the order you give. Each one has its own circuit breaker:
 ```ts
 const unicep = new Unicep({
   providers: defaultProviders(),
-  timeoutMs: 3000, // per provider, default 5000
+  timeoutMs: 3000, // per provider and attempt, default 5000
   circuitBreaker: {
     failureThreshold: 3, // consecutive failures before opening, default 3
     resetTimeoutMs: 30_000, // wait before a trial request, default 30000
@@ -68,6 +68,45 @@ const unicep = new Unicep({
 unicep.status();
 // [{ name: 'viacep', circuit: 'closed' }, { name: 'brasilapi', circuit: 'open' }, ...]
 ```
+
+## Retry
+
+By default a failing provider is skipped right away and the next one is tried. To also retry the
+same provider first (useful for flaky networks or when you have a single provider), enable
+`retry`:
+
+```ts
+const unicep = new Unicep({
+  providers: defaultProviders(),
+  retry: {
+    attempts: 2, // extra attempts per provider, default 0 (disabled)
+    delayMs: 200, // before the first retry, doubled on each further retry, default 200
+  },
+});
+```
+
+Only provider failures are retried; "not found" and cancellations are final. A provider that
+fails all its attempts counts as a single failure for its circuit breaker.
+
+## Cache
+
+Opt in to an in-memory cache to avoid repeated requests for the same CEP:
+
+```ts
+const unicep = new Unicep({
+  providers: defaultProviders(),
+  cache: {
+    ttlMs: 5 * 60_000, // how long an address is reused, default 5 minutes
+    maxEntries: 500, // least recently used entries are evicted first, default 500
+  },
+});
+
+unicep.clearCache();
+```
+
+Only successful lookups are cached (not "not found" or failures). Masked and unmasked CEPs share
+an entry, and each call gets its own copy of the address. The cache lives in the `Unicep`
+instance, so create it once and reuse it.
 
 ## Errors
 
