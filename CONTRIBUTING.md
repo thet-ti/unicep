@@ -72,6 +72,27 @@ Required setup:
 The first publish of each package must come from a token. Once the packages exist you can
 switch to npm trusted publishing (GitHub OIDC) and drop `NPM_TOKEN`.
 
+## Repository security (maintainers)
+
+- **Code owners:** [`.github/CODEOWNERS`](.github/CODEOWNERS) requests a review from the owners, and
+  the `Protect main` ruleset requires their approval.
+- **`Protect main` ruleset:** changes reach `main` only through pull requests with one approval,
+  resolved conversations, passing CI checks and a linear history. Force-pushes and branch
+  deletion are blocked. Repository admins can bypass it.
+- **Merging:** only squash merges are allowed and the branch is deleted afterwards. The squash
+  commit uses the PR title, so titles must follow Conventional Commits (the `PR title` check).
+- **Workflows:** GitHub Actions are pinned to commit SHAs (Dependabot keeps them updated),
+  workflow tokens default to read-only, and workflows from external contributors need approval.
+- **Secrets and alerts:** secret scanning, push protection, Dependabot alerts and security
+  updates, and private vulnerability reporting are enabled.
+- **Environment:** the `production` environment can only be deployed from `main`.
+
+The release workflow opens the "version packages" pull request with the workflow token. That
+requires "Allow GitHub Actions to create and approve pull requests" to be enabled in the
+organization's Actions settings. Pull requests opened with that token do not trigger CI, so an
+admin merges them with the ruleset bypass, or the workflow can use a personal access token or a
+GitHub App token instead.
+
 ## Code of conduct
 
 By participating you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
