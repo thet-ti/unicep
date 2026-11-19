@@ -75,17 +75,27 @@ Please use these free services responsibly:
 - Read and respect each service's terms. For commercial or business-critical use, consider
   contacting the maintainers or running your own instance (see the `baseUrl` option).
 
-## Status page
+## Documentation and status page
 
-[`apps/site`](apps/site) is an Astro (SSR) page that shows, for each built-in provider,
-whether it is online, its latency and the state of its circuit breaker. Checks are shared between
-visitors and refreshed at most once a minute.
+[`apps/site`](apps/site) is an Astro site with:
+
+- **Documentation** ([Starlight](https://starlight.astro.build)) in Portuguese and English, with
+  code examples for the core and each framework, provider configuration and ready-made prompts to
+  implement unicep with an AI agent.
+- **Agent friendly output:** `/llms.txt`, `/llms-full.txt` (Portuguese) and
+  `/_llms-txt/english.txt`, every page as Markdown (append `.md` to its URL), and "Copy Markdown"
+  and "Open in Claude / ChatGPT" buttons on each page.
+- **Status page** (`/status`) that shows, for each built-in provider, whether it is online, its
+  latency and the state of its circuit breaker. Checks are shared between visitors and refreshed
+  at most once a minute.
 
 ```bash
 pnpm --filter @unicep/site dev
 ```
 
-A [Render](https://render.com) blueprint is included in [`render.yaml`](render.yaml).
+Set `SITE_URL` to the public address of the site so `llms.txt` and the sitemap use absolute URLs
+(Render provides it automatically). A [Render](https://render.com) blueprint is included in
+[`render.yaml`](render.yaml).
 
 ## Development
 

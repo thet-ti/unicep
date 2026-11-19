@@ -60,14 +60,25 @@ Apps live in `apps/*` and are private (never published, ignored by changesets):
 
 | App            | Purpose                                                                |
 | -------------- | ---------------------------------------------------------------------- |
-| `@unicep/site` | Astro SSR status page: online/offline, latency and circuit state cards |
+| `@unicep/site` | Astro site: home, Starlight documentation and the provider status page |
 
-The status app probes each provider through its own `Unicep` instance (so the circuit state is
-the real one), shares one snapshot between visitors for 60 seconds, and deploys to Render
-(`render.yaml`, Node adapter). It uses Astro 7, which needs Node >= 22.23.4 (the
-libraries themselves only need Node >= 20). The page is bilingual: Portuguese at `/` (the library
-is Brazilian) and English at `/en/`, with all copy in `apps/site/src/i18n/ui.ts`. Its look
-follows the .thet identity: pure black, neutral grays and magenta only on the brand marks.
+The site (`apps/site`) uses Astro 7, which needs Node >= 22.23.4 (the libraries themselves only
+need Node >= 20), and deploys to Render (`render.yaml`, Node adapter).
+
+- **Routes:** home at `/`, status at `/status`, documentation at `/docs/*`. Portuguese is the
+  default language (the library is Brazilian) and English lives under `/en/`. Chrome and status
+  copy is in `src/i18n/ui.ts`; documentation pages are MDX in `src/content/docs/docs` (pt-BR) and
+  `src/content/docs/en/docs` (English). Keep both languages in sync when changing a page.
+- **Status page:** probes each provider through its own `Unicep` instance (so the circuit state is
+  the real one) and shares one snapshot between visitors for 60 seconds.
+- **Agent friendly docs:** `starlight-llms-txt` generates `/llms.txt`, `/llms-full.txt` (default
+  language only; English has its own set at `/_llms-txt/english.txt`) and `starlight-page-actions`
+  adds the copy-as-Markdown and open-in-Claude/ChatGPT buttons and serves each page as `.md`. The
+  `AiPrompt` component renders ready-made prompts per framework (`src/lib/prompts.ts`).
+- **Look:** the .thet identity everywhere, including Starlight (`src/styles`): pure black, neutral
+  grays and magenta only on the brand marks. The site is dark only.
+- **Environment:** `SITE_URL` (public address, defaults to Render's `RENDER_EXTERNAL_URL`, then
+  localhost) feeds `llms.txt` and the sitemap.
 
 There is no server package: `@unicep/core` is already usable on the backend. Bindings are thin,
 independent wrappers over the core (no shared UI runtime such as Preact). Angular bindings avoid decorators so they build with tsup instead of ng-packagr.

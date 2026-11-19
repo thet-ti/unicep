@@ -55,9 +55,9 @@ Two GitHub Actions workflows ship the project. Both run on pushes to `main`.
 3. Merging that pull request publishes the new versions of `@unicep/*` to npm with provenance
    and creates the GitHub releases.
 
-**Status page** (`.github/workflows/deploy-status.yml`)
+**Site: documentation and status page** (`.github/workflows/deploy-site.yml`)
 
-After a push to `main` that touches the status app, the core package or the deploy config
+After a push to `main` that touches the site app, the core package or the deploy config
 (or when run manually), the workflow builds and tests the app and then calls the Render deploy
 hook for that exact commit. Render's own auto-deploy is off (see `render.yaml`).
 
