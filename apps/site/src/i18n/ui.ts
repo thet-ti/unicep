@@ -92,7 +92,7 @@ export const messages: Record<Locale, Messages> = {
         },
         {
           title: 'Pronta para o seu framework',
-          text: 'Núcleo em TypeScript puro, com bindings para React, Vue e Angular.',
+          text: 'Core em TypeScript puro, com bindings para React, Vue e Angular.',
         },
         {
           title: 'Feita para agentes',
