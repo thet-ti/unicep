@@ -11,7 +11,9 @@ export {
 export {
   type AwesomeApiOptions,
   awesomeApi,
+  type BuiltInProviderName,
   brasilApi,
+  builtInProviderNames,
   type DefaultProvidersOptions,
   defaultProviders,
   type HttpProviderOptions,
