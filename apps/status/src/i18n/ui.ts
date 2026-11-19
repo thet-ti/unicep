@@ -65,7 +65,7 @@ export const messages: Record<Locale, Messages> = {
     description: 'Live status of the CEP providers used by unicep.',
     eyebrow: 'Status',
     heading: 'Provider status',
-    allOperational: 'All providers are operational',
+    allOperational: 'Fully Operational',
     allDown: 'All providers are down',
     someDown: (down, total) => `${down} of ${total} providers are down`,
     online: 'Online',
