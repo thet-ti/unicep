@@ -69,8 +69,9 @@ const cases: Case[] = [
       neighborhood: 'Bela Vista',
       street: 'Avenida Paulista',
       ibge: { city: '3550308', state: '35' },
+      location: { type: 'Point', coordinates: { longitude: '-46.63611', latitude: '-23.5475' } },
     },
-    expected: EXPECTED,
+    expected: { ...EXPECTED, latitude: -23.5475, longitude: -46.63611 },
     notFound: { status: 404, body: { type: 'service_error' } },
   },
   {
@@ -84,8 +85,10 @@ const cases: Case[] = [
       state: 'SP',
       city: 'São Paulo',
       city_ibge: '3550308',
+      lat: '-23.5632188',
+      lng: '-46.6542596',
     },
-    expected: EXPECTED,
+    expected: { ...EXPECTED, latitude: -23.5632188, longitude: -46.6542596 },
     notFound: { status: 404, body: { code: 'not_found' } },
   },
 ];
@@ -149,6 +152,54 @@ describe.each(cases)('$name provider', (c) => {
   it('throws ProviderError when city or state is missing', async () => {
     const fetch = mockFetch(200, {});
     await expect(c.create({ fetch }).lookup(CEP, context())).rejects.toBeInstanceOf(ProviderError);
+  });
+});
+
+describe('coordinates', () => {
+  const brasil = (coordinates: unknown) =>
+    brasilApi({
+      fetch: mockFetch(200, {
+        state: 'SP',
+        city: 'São Paulo',
+        location: { type: 'Point', coordinates },
+      }),
+    }).lookup(CEP, context());
+  const awesome = (lat: unknown, lng: unknown) =>
+    awesomeApi({ fetch: mockFetch(200, { state: 'SP', city: 'São Paulo', lat, lng }) }).lookup(
+      CEP,
+      context(),
+    );
+
+  it('accepts numbers as well as numeric strings', async () => {
+    const address = await brasil({ latitude: -23.5, longitude: -46.6 });
+    expect([address.latitude, address.longitude]).toEqual([-23.5, -46.6]);
+  });
+
+  it('leaves both out when the provider has none, or only one, or garbage', async () => {
+    for (const result of [
+      await brasil({}),
+      await brasil({ latitude: '-23.5' }),
+      await brasil({ latitude: 'x', longitude: '-46.6' }),
+      await brasil({ latitude: '95', longitude: '-46.6' }),
+      await brasil({ latitude: '-23.5', longitude: '200' }),
+      await brasil(undefined),
+      await awesome('', ''),
+      await awesome(null, '-46.6'),
+    ]) {
+      expect(result.latitude).toBeUndefined();
+      expect(result.longitude).toBeUndefined();
+    }
+  });
+
+  it('keeps zero, which is a valid coordinate', async () => {
+    const address = await awesome('0', '0');
+    expect([address.latitude, address.longitude]).toEqual([0, 0]);
+  });
+
+  it('providers without coordinates leave them undefined', async () => {
+    const address = await viaCep({ fetch: mockFetch(200, viaCepBody) }).lookup(CEP, context());
+    expect(address.latitude).toBeUndefined();
+    expect(address.longitude).toBeUndefined();
   });
 });
 

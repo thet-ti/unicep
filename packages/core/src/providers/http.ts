@@ -61,6 +61,17 @@ export function text(value: unknown): string | undefined {
   return trimmed === '' ? undefined : trimmed;
 }
 
+/**
+ * Parses a latitude or longitude (number or numeric string) and checks its range; anything else,
+ * including an empty string, is `undefined`.
+ */
+export function coordinate(value: unknown, limit: 90 | 180): number | undefined {
+  const raw = text(value);
+  if (raw === undefined) return undefined;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && Math.abs(parsed) <= limit ? parsed : undefined;
+}
+
 export interface AddressParts {
   street?: string | undefined;
   complement?: string | undefined;
@@ -68,11 +79,14 @@ export interface AddressParts {
   city?: string | undefined;
   state?: string | undefined;
   ibgeCode?: string | undefined;
+  latitude?: number | undefined;
+  longitude?: number | undefined;
 }
 
 /** Builds the normalized address; city and state are mandatory, the rest may be empty. */
 export function buildAddress(provider: string, cep: string, parts: AddressParts): ProviderAddress {
   if (!parts.city || !parts.state) throw malformed(provider);
+  const hasPosition = parts.latitude !== undefined && parts.longitude !== undefined;
   return {
     cep,
     street: parts.street ?? '',
@@ -81,5 +95,8 @@ export function buildAddress(provider: string, cep: string, parts: AddressParts)
     city: parts.city,
     state: parts.state.toUpperCase(),
     ibgeCode: parts.ibgeCode,
+    // Only both together make a usable position.
+    latitude: hasPosition ? parts.latitude : undefined,
+    longitude: hasPosition ? parts.longitude : undefined,
   };
 }

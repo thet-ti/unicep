@@ -41,7 +41,8 @@ const address = await unicep.lookup('01310-100'); // hyphen is optional
 // }
 ```
 
-`complement` and `ibgeCode` are optional because not every provider returns them. `street` and
+`complement`, `ibgeCode`, `latitude` and `longitude` are optional because not every provider returns
+them (only BrasilAPI and AwesomeAPI do coordinates, and both always come together). `street` and
 `neighborhood` are empty strings for city-level CEPs.
 
 ## How fallback works

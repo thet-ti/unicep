@@ -62,8 +62,8 @@ const address = await unicep.lookup('01310-100'); // com ou sem hífen
 // }
 ```
 
-O campo `provider` diz quem respondeu. `complement` e `ibgeCode` podem não vir, porque nem todo
-serviço devolve esses dados. Em CEPs de cidades inteiras, `street` e `neighborhood` vêm vazios.
+O campo `provider` diz quem respondeu. `complement`, `ibgeCode`, `latitude` e `longitude` podem
+não vir, porque nem todo serviço devolve esses dados (só BrasilAPI e AwesomeAPI mandam coordenadas). Em CEPs de cidades inteiras, `street` e `neighborhood` vêm vazios.
 
 ## Com o seu framework
 

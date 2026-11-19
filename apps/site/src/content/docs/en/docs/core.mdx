@@ -49,6 +49,8 @@ interface Address {
   city: string;
   state: string;          // the UF, for example "SP"
   ibgeCode?: string;
+  latitude?: number;      // with longitude, when the provider has them
+  longitude?: number;
   provider: string;       // who answered
 }
 ```

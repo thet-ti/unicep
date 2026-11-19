@@ -3,6 +3,7 @@ import type { CepProvider } from '../types';
 import {
   badStatus,
   buildAddress,
+  coordinate,
   getJson,
   type HttpProviderOptions,
   isRecord,
@@ -23,12 +24,15 @@ export function brasilApi(options: HttpProviderOptions = {}): CepProvider {
       if (!response.ok) throw badStatus(NAME, response.status);
       const data = response.data;
       if (!isRecord(data)) throw malformed(NAME);
+      const coordinates = isRecord(data.location) ? data.location.coordinates : undefined;
       return buildAddress(NAME, cep, {
         street: text(data.street),
         neighborhood: text(data.neighborhood),
         city: text(data.city),
         state: text(data.state),
         ibgeCode: isRecord(data.ibge) ? text(data.ibge.city) : undefined,
+        latitude: isRecord(coordinates) ? coordinate(coordinates.latitude, 90) : undefined,
+        longitude: isRecord(coordinates) ? coordinate(coordinates.longitude, 180) : undefined,
       });
     },
   };
