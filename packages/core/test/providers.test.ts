@@ -184,6 +184,48 @@ describe('mapping details', () => {
   });
 });
 
+describe('awesomeapi api key', () => {
+  const body = { address: 'Avenida Paulista', city: 'São Paulo', state: 'SP' };
+
+  it('sends no query string without a key', async () => {
+    const fetch = mockFetch(200, body);
+    await awesomeApi({ fetch }).lookup(CEP, context());
+    expect(fetch.mock.calls[0]?.[0]).toBe(`https://cep.awesomeapi.com.br/json/${CEP}`);
+  });
+
+  it('sends the key as the token query parameter, URL-encoded', async () => {
+    const fetch = mockFetch(200, body);
+    await awesomeApi({ fetch, apiKey: 'a b&c' }).lookup(CEP, context());
+    expect(fetch.mock.calls[0]?.[0]).toBe(
+      `https://cep.awesomeapi.com.br/json/${CEP}?token=a%20b%26c`,
+    );
+  });
+
+  it('keeps the request CORS-simple (no custom headers)', async () => {
+    const fetch = mockFetch(200, body);
+    await awesomeApi({ fetch, apiKey: 'secret' }).lookup(CEP, context());
+    expect(fetch.mock.calls[0]?.[1]?.headers).toEqual({ accept: 'application/json' });
+  });
+
+  it('treats a rejected key as a provider failure', async () => {
+    const fetch = mockFetch(401, { message: 'invalid key' });
+    await expect(
+      awesomeApi({ fetch, apiKey: 'bad' }).lookup(CEP, context()),
+    ).rejects.toBeInstanceOf(ProviderError);
+  });
+
+  it('defaultProviders passes the key only to awesomeapi', async () => {
+    const fetch = mockFetch(200, viaCepBody);
+    for (const provider of defaultProviders({ fetch, apiKeys: { awesomeapi: 'k' } })) {
+      await provider.lookup(CEP, context()).catch(() => {});
+    }
+    const urls = fetch.mock.calls.map((call) => String(call[0]));
+    expect(urls.filter((url) => url.includes('token='))).toEqual([
+      `https://cep.awesomeapi.com.br/json/${CEP}?token=k`,
+    ]);
+  });
+});
+
 describe('defaultProviders', () => {
   it('returns every built-in provider with a unique name', () => {
     const names = defaultProviders().map((provider) => provider.name);

@@ -9,8 +9,10 @@ export {
   UnicepError,
 } from './errors';
 export {
+  type AwesomeApiOptions,
   awesomeApi,
   brasilApi,
+  type DefaultProvidersOptions,
   defaultProviders,
   type HttpProviderOptions,
   openCep,
