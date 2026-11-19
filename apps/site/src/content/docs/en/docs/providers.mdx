@@ -8,12 +8,12 @@ import { Aside } from '@astrojs/starlight/components';
 A **provider** is the adapter for one CEP service. unicep ships four, all of them work straight
 from the browser (the services allow CORS) and return the same `Address`.
 
-| Function | Service | API key | Has `complement` | Has `ibgeCode` |
-| --- | --- | --- | --- | --- |
-| `viaCep()` | [ViaCEP](https://viacep.com.br) | no | yes | yes |
-| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | no | no | yes |
-| `openCep()` | [OpenCEP](https://opencep.com) | no | yes | yes |
-| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **yes** | no | yes |
+| Function | Service | API key | Has `complement` | Has `ibgeCode` | Has coordinates |
+| --- | --- | --- | --- | --- | --- |
+| `viaCep()` | [ViaCEP](https://viacep.com.br) | no | yes | yes | no |
+| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | no | no | yes | yes |
+| `openCep()` | [OpenCEP](https://opencep.com) | no | yes | yes | no |
+| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **yes** | no | yes | yes |
 
 `defaultProviders()` returns ViaCEP, BrasilAPI and OpenCEP, in that order. AwesomeAPI is left out
 because it needs an API key: see [AwesomeAPI key](#awesomeapi-key).
