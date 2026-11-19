@@ -65,7 +65,9 @@ Apps live in `apps/*` and are private (never published, ignored by changesets):
 The status app probes each provider through its own `Unicep` instance (so the circuit state is
 the real one), shares one snapshot between visitors for 60 seconds, and deploys to Render
 (`render.yaml`, Node adapter). It uses Astro 7, which needs Node >= 22.23.4 (the
-libraries themselves only need Node >= 20).
+libraries themselves only need Node >= 20). The page is bilingual: Portuguese at `/` (the library
+is Brazilian) and English at `/en/`, with all copy in `apps/status/src/i18n/ui.ts`. Its look
+follows the .thet identity: pure black, neutral grays and magenta only on the brand marks.
 
 There is no server package: `@unicep/core` is already usable on the backend. Bindings are thin,
 independent wrappers over the core (no shared UI runtime such as Preact). Angular bindings avoid decorators so they build with tsup instead of ng-packagr.
