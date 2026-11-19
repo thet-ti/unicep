@@ -55,6 +55,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter "./packages/*" test:coverage --if-present
+      - run: pnpm --filter "./apps/*" test --if-present
 
   package:
     name: Package checks
