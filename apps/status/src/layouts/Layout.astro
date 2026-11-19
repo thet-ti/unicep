@@ -81,7 +81,9 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
 
     <footer class="site-footer">
       <div class="container foot">
-        <img src="/thet-logo.png" alt=".thet" width="214" height="82" />
+        <a class="thet" href="https://thet.dev" rel="noopener noreferrer" aria-label=".thet">
+          <img src="/thet-logo.png" alt=".thet" width="214" height="82" />
+        </a>
         <p class="motd">{t.motd}</p>
         <p class="legal">
           <a href={repositoryUrl} rel="noopener noreferrer">MIT Open Source</a>
@@ -289,6 +291,17 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
     display: block;
     width: auto;
     height: 24px;
+  }
+
+  .foot a.thet {
+    display: block;
+    opacity: 0.9;
+    transition: opacity 0.15s;
+  }
+
+  .foot a.thet:hover {
+    opacity: 1;
+    text-decoration: none;
   }
 
   .motd {
