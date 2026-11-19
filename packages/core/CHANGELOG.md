@@ -1,0 +1,8 @@
+# @unicep/core
+
+## 0.1.0
+
+### Minor Changes
+
+- 8e01960: Initial release: `Unicep` lookup with circuit breaker fallback and ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI providers.
+- 1bff689: Add opt-in `retry` (with exponential backoff) and in-memory `cache` options, plus `clearCache()`.
