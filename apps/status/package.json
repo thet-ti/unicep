@@ -1,0 +1,25 @@
+{
+  "name": "@unicep/status",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Status page for the CEP providers used by @unicep/core",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "start": "node dist/server/entry.mjs",
+    "typecheck": "astro check",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/node": "^10.1.4",
+    "@unicep/core": "workspace:*",
+    "astro": "^6.4.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0"
+  }
+}
