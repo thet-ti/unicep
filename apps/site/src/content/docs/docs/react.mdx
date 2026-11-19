@@ -5,7 +5,7 @@ description: O hook useCep para React 18 ou superior.
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-O `@unicep/react` traz o hook `useCep`, que funciona com React 18 ou mais novo.
+O `@unicep/react` traz o hook `useCep`, para React 18 ou mais novo.
 
 <Tabs syncKey="pm">
 <TabItem label="npm">
@@ -38,7 +38,7 @@ bun add @unicep/react
 </TabItem>
 </Tabs>
 
-O `@unicep/core` vem junto como dependência, então você não precisa instalá-lo à parte.
+O `@unicep/core` é instalado junto.
 
 ## Uso
 
@@ -65,9 +65,7 @@ export function CampoCep() {
 }
 ```
 
-O hook só busca quando o valor é um CEP completo e válido (com ou sem hífen). Enquanto a pessoa
-ainda está digitando, ele não faz nada, então você pode ligá-lo direto ao campo de texto. Se o
-CEP muda no meio da busca, o resultado antigo some e a requisição anterior é cancelada.
+O hook só busca quando o valor é um CEP válido (com ou sem hífen), então dá para ligá-lo direto a um campo de texto. Se o CEP mudar, o resultado anterior some e a requisição em andamento é cancelada.
 
 ## API
 
@@ -83,9 +81,9 @@ useCep(cep: string | null | undefined, options?: {
 ```
 
 O `error` é um dos [erros da unicep](/docs/errors), como `CepNotFoundError` ou
-`AllProvidersFailedError`, então dá para mostrar uma mensagem diferente para cada caso.
+`AllProvidersFailedError`.
 
-## Usando os seus próprios providers e opções
+## Providers e opções próprias
 
 ```tsx
 import { Unicep, viaCep, brasilApi } from '@unicep/core';

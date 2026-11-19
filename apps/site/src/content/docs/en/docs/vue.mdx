@@ -5,7 +5,7 @@ description: The useCep composable for Vue 3.
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-`@unicep/vue` gives you the `useCep` composable, which works with Vue 3.3 or newer.
+`@unicep/vue` gives you the `useCep` composable, for Vue 3.3 or newer.
 
 <Tabs syncKey="pm">
 <TabItem label="npm">
@@ -38,7 +38,7 @@ bun add @unicep/vue
 </TabItem>
 </Tabs>
 
-`@unicep/core` comes along as a dependency, so you do not need to install it separately.
+`@unicep/core` is installed with it.
 
 ## Usage
 
@@ -59,10 +59,7 @@ const { data, error, isLoading } = useCep(cep);
 </template>
 ```
 
-The composable only looks things up when the value is a complete, valid CEP (with or without the
-hyphen). While the person is still typing it does nothing, so you can wire it straight to a text
-field. If the CEP changes mid-request, the old result goes away and the previous request is
-cancelled.
+The composable only looks up when the value is a valid CEP (with or without the hyphen), so you can wire it straight to a text field. If the CEP changes, the previous result is dropped and the in-flight request is cancelled.
 
 ## API
 
@@ -77,11 +74,10 @@ useCep(cep: MaybeRefOrGetter<string | null | undefined>, options?: {
 }
 ```
 
-Both `cep` and `enabled` accept a ref, a getter or a plain value. `error` is one of the
-[unicep errors](/en/docs/errors), such as `CepNotFoundError` or `AllProvidersFailedError`, so you
-can show a different message for each case.
+`cep` and `enabled` accept a ref, a getter or a plain value. `error` is one of the
+[unicep errors](/en/docs/errors), such as `CepNotFoundError` or `AllProvidersFailedError`.
 
-## Using your own providers and options
+## Custom providers and options
 
 ```ts
 import { Unicep, viaCep, brasilApi } from '@unicep/core';

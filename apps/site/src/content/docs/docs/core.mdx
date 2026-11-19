@@ -3,8 +3,8 @@ title: Núcleo (@unicep/core)
 description: A classe Unicep, as opções, retry, cache, cancelamento e os helpers.
 ---
 
-O `@unicep/core` é TypeScript puro, sem depender de nenhum framework. Ele roda no navegador e no
-Node.js 20 ou mais novo, usando o `fetch` nativo.
+O `@unicep/core` é TypeScript puro, sem dependência de framework. Roda no navegador e no Node.js
+20 ou mais novo, com o `fetch` nativo.
 
 ## Criando uma instância
 
@@ -20,8 +20,7 @@ const unicep = new Unicep({
 });
 ```
 
-Crie a instância **uma vez** e reaproveite em todo o app. É nela que vivem o estado dos circuit
-breakers e o cache, então criar uma nova a cada consulta joga tudo isso fora.
+Crie a instância **uma vez** e reutilize. O estado dos circuit breakers e o cache vivem nela.
 
 | Opção | Padrão | O que faz |
 | --- | --- | --- |
@@ -55,9 +54,8 @@ interface Address {
 
 ## Retry
 
-Por padrão, quando um provider falha a unicep já passa para o próximo. Se você quiser dar mais
-uma chance ao mesmo provider antes de desistir (útil quando a rede é instável ou quando você só
-tem um provider), ligue o `retry`:
+Por padrão, um provider que falha é pulado na hora. Para repetir o mesmo provider antes de passar
+para o próximo, ligue o `retry`:
 
 ```ts
 const unicep = new Unicep({
@@ -69,14 +67,12 @@ const unicep = new Unicep({
 });
 ```
 
-Só falhas do provider são repetidas. "CEP não encontrado" e cancelamentos são definitivos, não
-adianta insistir. E um provider que falhou em todas as tentativas conta como **uma** falha só
-para o circuit breaker.
+Só falhas do provider são repetidas. "CEP não encontrado" e cancelamentos são definitivos. Um
+provider que falha em todas as tentativas conta como **uma** falha para o circuit breaker.
 
 ## Cache
 
-Se o seu app consulta os mesmos CEPs várias vezes, ligue o cache em memória e economize
-requisições:
+Ligue o cache em memória para não repetir requisições do mesmo CEP:
 
 ```ts
 const unicep = new Unicep({
@@ -90,9 +86,8 @@ const unicep = new Unicep({
 unicep.clearCache();
 ```
 
-Só consultas que deram certo entram no cache (nada de "não encontrado" nem de falhas). CEPs com
-e sem hífen usam a mesma entrada, e cada chamada recebe a sua própria cópia do endereço, então
-você pode mexer no objeto à vontade.
+Só consultas bem-sucedidas entram no cache (não "não encontrado" nem falhas). CEPs com e sem
+hífen usam a mesma entrada, e cada chamada recebe a sua própria cópia do endereço.
 
 ## Cancelamento
 

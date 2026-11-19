@@ -1,16 +1,13 @@
 ---
 title: Primeiros passos
-description: Instale a unicep e faça a sua primeira consulta de CEP em poucos minutos.
+description: Instale a unicep e faça a sua primeira consulta de CEP.
 ---
 
 import { Tabs, TabItem, LinkCard, CardGrid } from '@astrojs/starlight/components';
 
-Todo mundo que precisa buscar um CEP acaba escrevendo a mesma classe de novo, e todo mundo
-já sofreu com o ViaCEP (ou qualquer outro serviço) saindo do ar bem na hora errada.
-
-A **unicep** resolve isso. Ela consulta vários serviços de CEP por trás de uma única interface e,
-se um deles cair, passa sozinha para o próximo. Você chama uma função e recebe sempre o mesmo
-objeto `Address`, não importa quem respondeu. Roda no navegador e no Node.js 20 ou mais novo.
+A **unicep** consulta vários serviços de CEP por trás de uma única interface. Se um serviço
+cair, ela passa para o próximo e devolve sempre o mesmo objeto `Address`. Funciona no navegador e
+no Node.js 20 ou mais novo.
 
 ## Instalação
 
@@ -65,15 +62,13 @@ const address = await unicep.lookup('01310-100'); // com ou sem hífen
 // }
 ```
 
-O campo `provider` conta quem respondeu. Já `complement` e `ibgeCode` podem não vir, porque
-nem todo serviço devolve essas informações. E em CEPs que cobrem uma cidade inteira, `street` e
-`neighborhood` chegam como texto vazio.
+O campo `provider` diz quem respondeu. `complement` e `ibgeCode` podem não vir, porque nem todo
+serviço devolve esses dados. Em CEPs de cidades inteiras, `street` e `neighborhood` vêm vazios.
 
-## Usando com o seu framework
+## Com o seu framework
 
-O núcleo é TypeScript puro e funciona em qualquer lugar. Se você usa React, Vue ou Angular, os
-bindings deixam tudo ainda mais simples: eles buscam sozinhos assim que o usuário termina de
-digitar um CEP válido.
+O núcleo é TypeScript puro. Para React, Vue e Angular há bindings que buscam sozinhos quando o
+CEP fica válido.
 
 <CardGrid>
   <LinkCard title="React" description="O hook useCep" href="/docs/react" />
@@ -82,8 +77,8 @@ digitar um CEP válido.
   <LinkCard title="Implementar com IA" description="Prompts prontos e llms.txt" href="/docs/ai" />
 </CardGrid>
 
-## Para onde ir agora
+## Próximos passos
 
-- Quer entender o que acontece por baixo? Veja [como a unicep funciona](/docs/how-it-works).
-- Quer ajustar timeout, retry ou cache? Está tudo no [guia do núcleo](/docs/core).
-- Quer trocar a ordem dos serviços ou plugar o seu? Passe pelos [providers](/docs/providers).
+- [Como funciona](/docs/how-it-works): fallback, circuit breaker e erros.
+- [Núcleo](/docs/core): timeout, retry, cache e cancelamento.
+- [Providers](/docs/providers): configurar, ordenar ou criar o seu.

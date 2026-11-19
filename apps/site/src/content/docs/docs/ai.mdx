@@ -6,9 +6,7 @@ description: Como usar agentes de IA com a documentação da unicep, com llms.tx
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import AiPrompt from '../../../components/AiPrompt.astro';
 
-Esta documentação foi escrita pensando tanto em pessoas quanto em agentes de IA. Então, se você
-prefere deixar o Claude, o ChatGPT, o Cursor ou o Claude Code fazerem o trabalho braçal, dá para
-pedir que eles implementem a consulta de CEP no seu projeto, já com o contexto certo.
+Esta documentação também foi pensada para agentes de IA (Claude, ChatGPT, Cursor, Claude Code e outros). Dá para pedir que eles implementem a consulta de CEP no seu projeto já com o contexto certo.
 
 ## Botões em cada página
 
@@ -27,13 +25,11 @@ No topo de cada página tem dois botões:
 | `/_llms-txt/english.txt` | A mesma documentação em inglês. |
 | `/docs/<página>.md` | Qualquer página em Markdown: é só acrescentar `.md` à URL. |
 
-Se você mandar o agente ler o `/llms-full.txt`, ele já fica com o contexto inteiro de uma vez.
+Aponte o agente para o `/llms-full.txt` e ele terá todo o contexto de uma vez.
 
 ## Prompts prontos
 
-Escolha o seu ambiente, copie o prompt e cole no seu agente. Se preferir, abra direto no Claude
-ou no ChatGPT. Cada prompt já vem com um resumo da API e o link da documentação completa, então
-o agente não começa do zero.
+Escolha o seu ambiente, copie o prompt e cole no seu agente, ou abra direto no Claude ou no ChatGPT. Cada prompt traz um resumo da API e o link da documentação completa.
 
 <Tabs syncKey="framework">
 <TabItem label="React">
@@ -52,8 +48,7 @@ o agente não começa do zero.
 
 ## Dicas
 
-- Se o seu agente roda no terminal (o Claude Code, por exemplo), cole o prompt direto nele. Ele
-  consegue ler a documentação e alterar o seu projeto sozinho.
+- Se o agente roda no terminal (como o Claude Code), cole o prompt direto nele: ele lê a documentação e altera o seu projeto.
 - Peça para criar a instância do `Unicep` uma vez só e ligar o [cache](/docs/core#cache).
-- Dê uma olhada no que foi gerado: veja se os [erros](/docs/errors) estão tratados e se o uso
+- Revise o que foi gerado: confira se os [erros](/docs/errors) estão tratados e se o uso
   dos [providers](/docs/providers#usando-com-responsabilidade) está responsável.

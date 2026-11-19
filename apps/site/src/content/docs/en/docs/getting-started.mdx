@@ -1,17 +1,13 @@
 ---
 title: Getting started
-description: Install unicep and make your first CEP lookup in a few minutes.
+description: Install unicep and make your first CEP lookup.
 ---
 
 import { Tabs, TabItem, LinkCard, CardGrid } from '@astrojs/starlight/components';
 
-Everyone who needs to look up a CEP ends up writing the same class again, and everyone has been
-bitten by ViaCEP (or any other service) going down at the worst possible moment.
-
-**unicep** takes care of that. It queries several CEP services behind a single interface and, if
-one of them goes down, it moves on to the next one by itself. You call one function and always get
-the same `Address` object back, no matter who answered. It runs in the browser and on Node.js 20
-or newer.
+**unicep** queries several CEP services behind a single interface. If one service goes down, it
+moves on to the next one and always returns the same `Address` object. It works in the browser
+and on Node.js 20 or newer.
 
 ## Installation
 
@@ -66,15 +62,14 @@ const address = await unicep.lookup('01310-100'); // with or without the hyphen
 // }
 ```
 
-The `provider` field tells you who answered. `complement` and `ibgeCode` might be missing,
-because not every service returns them. And for CEPs that cover a whole city, `street` and
-`neighborhood` come back as empty strings.
+The `provider` field tells you who answered. `complement` and `ibgeCode` may be missing, because
+not every service returns them. For CEPs that cover a whole city, `street` and `neighborhood`
+are empty.
 
-## Using it with your framework
+## With your framework
 
-The core is plain TypeScript and works anywhere. If you use React, Vue or Angular, the bindings
-make it even easier: they look things up by themselves as soon as the user finishes typing a
-valid CEP.
+The core is plain TypeScript. For React, Vue and Angular there are bindings that look up on their
+own once the CEP is valid.
 
 <CardGrid>
   <LinkCard title="React" description="The useCep hook" href="/en/docs/react" />
@@ -83,8 +78,8 @@ valid CEP.
   <LinkCard title="Implement with AI" description="Ready-made prompts and llms.txt" href="/en/docs/ai" />
 </CardGrid>
 
-## Where to go next
+## Next steps
 
-- Want to know what happens under the hood? See [how unicep works](/en/docs/how-it-works).
-- Want to tweak the timeout, retry or cache? It is all in the [core guide](/en/docs/core).
-- Want to change the order of the services or plug in your own? Head to [providers](/en/docs/providers).
+- [How it works](/en/docs/how-it-works): fallback, circuit breaker and errors.
+- [Core](/en/docs/core): timeout, retry, cache and cancellation.
+- [Providers](/en/docs/providers): configure, reorder or write your own.

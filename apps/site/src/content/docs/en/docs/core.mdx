@@ -3,8 +3,8 @@ title: Core (@unicep/core)
 description: The Unicep class, options, retry, cache, cancellation and helpers.
 ---
 
-`@unicep/core` is plain TypeScript, with no dependency on any framework. It runs in the browser
-and on Node.js 20 or newer, using the native `fetch`.
+`@unicep/core` is plain TypeScript with no framework dependency. It runs in the browser and on
+Node.js 20 or newer, with the native `fetch`.
 
 ## Creating an instance
 
@@ -20,8 +20,7 @@ const unicep = new Unicep({
 });
 ```
 
-Create the instance **once** and reuse it across your app. The circuit breaker state and the
-cache live in it, so creating a new one for every lookup throws all of that away.
+Create the instance **once** and reuse it. Circuit breaker state and the cache live in it.
 
 | Option | Default | What it does |
 | --- | --- | --- |
@@ -56,9 +55,8 @@ interface Address {
 
 ## Retry
 
-By default, when a provider fails unicep just moves on to the next one. If you would rather give
-the same provider another shot before giving up (handy on flaky networks, or when you only have
-one provider), turn on `retry`:
+By default a failing provider is skipped right away. To retry the same provider before moving on
+to the next one, turn on `retry`:
 
 ```ts
 const unicep = new Unicep({
@@ -70,14 +68,12 @@ const unicep = new Unicep({
 });
 ```
 
-Only provider failures are retried. "CEP not found" and cancellations are final, there is no
-point in insisting. And a provider that failed every attempt counts as **one** failure for its
-circuit breaker.
+Only provider failures are retried. "CEP not found" and cancellations are final. A provider that
+fails every attempt counts as **one** failure for its circuit breaker.
 
 ## Cache
 
-If your app looks up the same CEPs over and over, turn on the in-memory cache and save some
-requests:
+Turn on the in-memory cache to avoid repeated requests for the same CEP:
 
 ```ts
 const unicep = new Unicep({
@@ -91,9 +87,8 @@ const unicep = new Unicep({
 unicep.clearCache();
 ```
 
-Only lookups that worked go into the cache (no "not found", no failures). CEPs with and without
-the hyphen share one entry, and every call gets its own copy of the address, so feel free to
-change the object.
+Only successful lookups are cached (not "not found" or failures). CEPs with and without the
+hyphen share an entry, and each call gets its own copy of the address.
 
 ## Cancellation
 

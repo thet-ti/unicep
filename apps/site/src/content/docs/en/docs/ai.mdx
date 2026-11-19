@@ -6,9 +6,7 @@ description: How to use AI agents with the unicep documentation, with llms.txt, 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import AiPrompt from '../../../../components/AiPrompt.astro';
 
-This documentation was written with both people and AI agents in mind. So if you would rather
-let Claude, ChatGPT, Cursor or Claude Code do the legwork, you can ask them to implement CEP
-lookup in your project, with the right context from the start.
+This documentation is also written for AI agents (Claude, ChatGPT, Cursor, Claude Code and others). You can ask them to implement CEP lookup in your project with the right context from the start.
 
 ## Buttons on every page
 
@@ -27,13 +25,11 @@ At the top of every page there are two buttons:
 | `/llms-full.txt` | The same documentation in Portuguese (the site's default language). |
 | `/en/docs/<page>.md` | Any page as Markdown: just add `.md` to the URL. |
 
-If you point the agent at `/_llms-txt/english.txt`, it gets the whole context at once.
+Point the agent at `/_llms-txt/english.txt` and it will have all the context at once.
 
 ## Ready-made prompts
 
-Pick your environment, copy the prompt and paste it into your agent. If you prefer, open it
-straight in Claude or ChatGPT. Each prompt already comes with an API summary and the link to the
-full documentation, so the agent does not start from scratch.
+Pick your environment, copy the prompt and paste it into your agent, or open it straight in Claude or ChatGPT. Each prompt includes an API summary and the link to the full documentation.
 
 <Tabs syncKey="framework">
 <TabItem label="React">
@@ -52,8 +48,7 @@ full documentation, so the agent does not start from scratch.
 
 ## Tips
 
-- If your agent runs in the terminal (Claude Code, for example), paste the prompt straight into
-  it. It can read the documentation and change your project on its own.
+- If the agent runs in the terminal (like Claude Code), paste the prompt straight into it: it reads the documentation and changes your project.
 - Ask it to create the `Unicep` instance just once and turn on the [cache](/en/docs/core#cache).
-- Take a look at what it generated: check that the [errors](/en/docs/errors) are handled and
+- Review what it generated: check that the [errors](/en/docs/errors) are handled and
   that the [use of the providers](/en/docs/providers#using-them-responsibly) is responsible.

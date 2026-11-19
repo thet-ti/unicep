@@ -1,20 +1,19 @@
 ---
 title: Erros
-description: Os erros que a unicep lança e como lidar com cada um.
+description: Os erros lançados pela unicep e como tratá-los.
 ---
 
-Todos os erros da unicep estendem `UnicepError`, então dá para pegar qualquer um deles de uma vez
-se você quiser.
+Todos os erros estendem `UnicepError`.
 
 | Erro | Quando acontece |
 | --- | --- |
-| `InvalidCepError` | O valor não é um CEP. Nenhuma requisição é feita. Traz o `input`. |
-| `CepNotFoundError` | O CEP está bem escrito, mas nenhum provider conhece. Traz o `cep`. |
-| `AllProvidersFailedError` | Nenhum provider conseguiu responder. O `error.errors` tem um erro por provider, na ordem em que foram tentados. |
-| `ProviderError` | É o que um provider lança quando falha. Traz o `provider` e a `cause`. |
-| `CircuitOpenError` | Um provider foi pulado porque o circuito dele está aberto. Aparece dentro do `AllProvidersFailedError.errors`. |
+| `InvalidCepError` | O valor não é um CEP. Nenhuma requisição é feita. Tem `input`. |
+| `CepNotFoundError` | O CEP é válido, mas nenhum provider o conhece. Tem `cep`. |
+| `AllProvidersFailedError` | Nenhum provider conseguiu responder. `error.errors` tem um erro por provider, na ordem tentada. |
+| `ProviderError` | Lançado por um provider numa falha. Tem `provider` e `cause`. |
+| `CircuitOpenError` | Um provider foi pulado porque o circuito dele está aberto. Aparece em `AllProvidersFailedError.errors`. |
 
-## Como tratar
+## Tratando erros
 
 ```ts
 import {
@@ -28,11 +27,11 @@ try {
   mostrar(address);
 } catch (error) {
   if (error instanceof InvalidCepError) {
-    // peça para a pessoa conferir o CEP
+    // peça para conferir o CEP
   } else if (error instanceof CepNotFoundError) {
     // o CEP não existe
   } else if (error instanceof AllProvidersFailedError) {
-    // todos os serviços estão fora do ar; dê uma olhada em error.errors
+    // todos os serviços falharam; veja error.errors
     console.warn(error.errors);
   } else {
     throw error; // inclui o motivo de um cancelamento por AbortSignal
@@ -42,17 +41,13 @@ try {
 
 ## Cancelamento
 
-Se você passou um `AbortSignal` e cancelou, a promise é rejeitada com o **motivo do
-cancelamento** (por padrão, um `AbortError`), e não com um erro da unicep. Isso também não
-mexe em nenhum circuit breaker.
+Se você cancelar com um `AbortSignal`, a promise é rejeitada com o **motivo do cancelamento**
+(por padrão, um `AbortError`), não com um erro da unicep. Os circuit breakers não são afetados.
 
-## "Não encontrado" ou "falhou"?
+## "Não encontrado" ou "falhou"
 
-A diferença importa, e a unicep tenta ser honesta sobre ela:
-
-- Se todos os providers que responderam disseram que o CEP não existe, o erro é um
+- Se todos os providers que responderam disseram que o CEP não existe, o erro é
   `CepNotFoundError`.
-- Se alguns falharam e outros disseram "não encontrado", o erro é um `AllProvidersFailedError`.
-  Nesse caso não dá para garantir que o CEP não existe, só que nem todo mundo conseguiu
-  responder.
+- Se alguns falharam e outros disseram "não encontrado", o erro é `AllProvidersFailedError`,
+  porque não dá para afirmar que o CEP não existe.
 - Provider com o circuito aberto não conta como "respondeu".

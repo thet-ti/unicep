@@ -5,9 +5,8 @@ description: The built-in providers, how to configure and order them, write your
 
 import { Aside } from '@astrojs/starlight/components';
 
-A **provider** is the adapter for one CEP service. unicep already comes with four. All of them
-work straight from the browser (the services allow CORS) and all of them return the same
-`Address` object.
+A **provider** is the adapter for one CEP service. unicep ships four, all of them work straight
+from the browser (the services allow CORS) and return the same `Address`.
 
 | Function | Service | Has `complement` | Has `ibgeCode` |
 | --- | --- | --- | --- |
@@ -20,8 +19,7 @@ work straight from the browser (the services allow CORS) and all of them return 
 
 ## Choosing and ordering
 
-The order of the list is the priority order: the first one is tried before the others. Pass only
-the ones you want to use, in whatever order you prefer:
+The order of the list is the priority. Pass only the ones you want, in the order you prefer:
 
 ```ts
 import { Unicep, brasilApi, openCep, viaCep } from '@unicep/core';
@@ -37,8 +35,8 @@ All built-in providers accept the same options:
 
 | Option | What it does |
 | --- | --- |
-| `fetch` | Uses your own `fetch` implementation (the default is `globalThis.fetch`). Great for tests, proxies and unusual environments. |
-| `baseUrl` | Changes the service address, so you can use a proxy or your own instance. |
+| `fetch` | Your own `fetch` implementation (default: `globalThis.fetch`). Useful for tests and proxies. |
+| `baseUrl` | Changes the service address, to use a proxy or your own instance. |
 
 ```ts
 import { Unicep, brasilApi, viaCep } from '@unicep/core';
@@ -54,14 +52,13 @@ const unicep = new Unicep({
 To apply the same options to all of them at once: `defaultProviders({ fetch: myFetch })`.
 
 <Aside type="note">
-  In the browser, each provider only sends the `Accept` header, so the request triggers no CORS
-  preflight. If you put your own proxy in front, try to keep it that way.
+  In the browser, each provider only sends the `Accept` header, so there is no CORS preflight. If
+  you use your own proxy, keep it that way.
 </Aside>
 
 ## Writing your own provider
 
-If you want to use a service unicep does not have (your company's API, say), just implement the
-`CepProvider` interface:
+To use a service unicep does not have, implement the `CepProvider` interface:
 
 ```ts
 import { CepNotFoundError, ProviderError, type CepProvider } from '@unicep/core';
@@ -85,25 +82,25 @@ const myProvider: CepProvider = {
 };
 ```
 
-A few small rules:
+Rules:
 
-- Return the address **without** the `provider` field. unicep fills it in with the `name` for you.
-- When the CEP does not exist, throw a `CepNotFoundError`. For any service failure, throw another
-  error (preferably a `ProviderError`). Only failures count against the circuit breaker.
-- Pass the `signal` along to `fetch`, otherwise timeouts and cancellation will not work.
+- Return the address **without** the `provider` field; unicep fills it in with the `name`.
+- Throw `CepNotFoundError` when the CEP does not exist and another error (preferably
+  `ProviderError`) for service failures. Only failures count against the circuit breaker.
+- Pass the `signal` to `fetch`, so timeouts and cancellation work.
 - The `name` must be unique within the instance.
 
 ## Using them responsibly
 
-unicep does **not provide, host or own** any CEP data or API. It is just a client that queries
-independent public services, each with its own terms, limits and availability. The project has
-no affiliation with any of them.
+unicep does **not provide, host or own** any CEP data or API. It only queries independent public
+services, each with its own terms, limits and availability, and it is not affiliated with any of
+them.
 
-<Aside type="caution" title="Be a good citizen">
-  - Turn on the [cache](/en/docs/core#cache) so you do not repeat the same lookup for nothing.
-  - Do not use unicep to crawl or validate entire databases. Some services warn that heavy
-    automated use may get you blocked. If you need volume, use a database you can download
-    (OpenCEP publishes one) or host your own.
-  - Read each service's terms. For business-critical commercial use, it is worth talking to the
-    maintainers or running your own instance through the `baseUrl` option.
+<Aside type="caution" title="Good practices">
+  - Turn on the [cache](/en/docs/core#cache) so the same lookup is not repeated.
+  - Do not use unicep to crawl or validate entire databases: some services warn that heavy
+    automated use may get you blocked. For bulk needs, use a downloadable database (OpenCEP
+    publishes one) or host your own.
+  - Read each service's terms. For business-critical commercial use, talk to the maintainers or
+    run your own instance through the `baseUrl` option.
 </Aside>

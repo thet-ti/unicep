@@ -5,8 +5,7 @@ description: injectCep with signals, lookupCep with RxJS and the UNICEP token.
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-`@unicep/angular` gives you signal and RxJS bindings, for Angular 17 or newer and RxJS 7. The
-package uses no decorators, so it works with the standard Angular build, no extra setup needed.
+`@unicep/angular` gives you signal and RxJS bindings, for Angular 17 or newer and RxJS 7. The package uses no decorators, so it works with the standard Angular build.
 
 <Tabs syncKey="pm">
 <TabItem label="npm">
@@ -39,12 +38,11 @@ bun add @unicep/angular
 </TabItem>
 </Tabs>
 
-`@unicep/core` comes along as a dependency, so you do not need to install it separately.
+`@unicep/core` is installed with it.
 
-## Using it with signals
+## Usage with signals
 
-`injectCep` has to run in an injection context, such as in a field or in the constructor of a
-component or service.
+`injectCep` must be called in an injection context, such as in a field or constructor of a component or service.
 
 ```ts
 import { Component, signal } from '@angular/core';
@@ -67,9 +65,7 @@ export class CepFieldComponent {
 }
 ```
 
-The lookup only happens when the value is a complete, valid CEP (with or without the hyphen).
-While the person is still typing, nothing is done. If the CEP changes mid-request, the old result
-goes away and the previous request is cancelled.
+The lookup only happens when the value is a valid CEP (with or without the hyphen). If the CEP changes, the previous result is dropped and the in-flight request is cancelled.
 
 ## API
 
@@ -88,8 +84,7 @@ injectCep(cep: () => string | null | undefined, options?: {
 
 ### `lookupCep(unicep, cep)`
 
-The Observable version, for those who prefer RxJS pipelines. If you unsubscribe, the request is
-cancelled too.
+The Observable version, for RxJS pipelines. Unsubscribing cancels the request.
 
 ```ts
 import { inject } from '@angular/core';
@@ -101,9 +96,7 @@ lookupCep(unicep, '01310100').subscribe((address) => console.log(address));
 
 ### `UNICEP` and `provideUnicep(unicep)`
 
-`UNICEP` is the injection token for the `Unicep` instance. By default it hands you a shared
-instance with all the built-in providers. If you want to change the providers, the timeout, the
-cache or the circuit breaker, just provide your own:
+`UNICEP` is the injection token for the `Unicep` instance. By default it is a shared instance with all built-in providers. To change providers, timeout, cache or circuit breaker, provide your own:
 
 ```ts
 import { ApplicationConfig } from '@angular/core';
