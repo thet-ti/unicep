@@ -46,6 +46,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:live": "vitest run -c vitest.live.config.ts",
     "check:package": "publint && attw --pack . --profile node16"
   },
   "publishConfig": {
