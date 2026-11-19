@@ -8,6 +8,7 @@ import { viaCep } from './viacep';
 export { type AwesomeApiOptions, awesomeApi } from './awesomeapi';
 export { brasilApi } from './brasilapi';
 export type { HttpProviderOptions } from './http';
+export { brasilApiLocalities, defaultLocalityProviders, ibge } from './localities';
 export { openCep } from './opencep';
 export { viaCep } from './viacep';
 

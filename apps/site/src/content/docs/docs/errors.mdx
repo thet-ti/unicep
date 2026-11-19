@@ -10,6 +10,8 @@ Todos os erros estendem `UnicepError`.
 | `InvalidCepError` | O valor não é um CEP. Nenhuma requisição é feita. Tem `input`. |
 | `CepNotFoundError` | O CEP é válido, mas nenhum provider o conhece. Tem `cep`. |
 | `AllProvidersFailedError` | Nenhum provider conseguiu responder. `error.errors` tem um erro por provider, na ordem tentada. |
+| `InvalidStateError` | A UF passada para `cities()` não é uma das 27. Tem `input`. |
+| `AllLocalityProvidersFailedError` | Nenhum provider conseguiu listar estados ou cidades. Tem `resource` e `errors`. |
 | `ProviderError` | Lançado por um provider numa falha. Tem `provider` e `cause`. |
 | `CircuitOpenError` | Um provider foi pulado porque o circuito dele está aberto. Aparece em `AllProvidersFailedError.errors`. |
 
