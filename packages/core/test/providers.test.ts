@@ -214,9 +214,16 @@ describe('awesomeapi api key', () => {
     ).rejects.toBeInstanceOf(ProviderError);
   });
 
-  it('defaultProviders passes the key only to awesomeapi', async () => {
+  it('defaultProviders adds awesomeapi last, with the key, only when a key is given', async () => {
     const fetch = mockFetch(200, viaCepBody);
-    for (const provider of defaultProviders({ fetch, apiKeys: { awesomeapi: 'k' } })) {
+    const providers = defaultProviders({ fetch, apiKeys: { awesomeapi: 'k' } });
+    expect(providers.map((provider) => provider.name)).toEqual([
+      'viacep',
+      'brasilapi',
+      'opencep',
+      'awesomeapi',
+    ]);
+    for (const provider of providers) {
       await provider.lookup(CEP, context()).catch(() => {});
     }
     const urls = fetch.mock.calls.map((call) => String(call[0]));
@@ -227,9 +234,16 @@ describe('awesomeapi api key', () => {
 });
 
 describe('defaultProviders', () => {
-  it('returns every built-in provider with a unique name', () => {
+  it('returns viacep, brasilapi and opencep by default, with unique names', () => {
     const names = defaultProviders().map((provider) => provider.name);
-    expect(names).toEqual(['viacep', 'brasilapi', 'opencep', 'awesomeapi']);
+    expect(names).toEqual(['viacep', 'brasilapi', 'opencep']);
+  });
+
+  it('leaves awesomeapi out when the key is missing or empty', () => {
+    expect(defaultProviders({ apiKeys: {} }).map((p) => p.name)).not.toContain('awesomeapi');
+    expect(defaultProviders({ apiKeys: { awesomeapi: '' } }).map((p) => p.name)).not.toContain(
+      'awesomeapi',
+    );
   });
 
   it('forwards options to every provider', async () => {
@@ -237,6 +251,6 @@ describe('defaultProviders', () => {
     for (const provider of defaultProviders({ fetch })) {
       await provider.lookup(CEP, context()).catch(() => {});
     }
-    expect(fetch).toHaveBeenCalledTimes(4);
+    expect(fetch).toHaveBeenCalledTimes(3);
   });
 });

@@ -33,7 +33,7 @@ const settle = async () => {
 describe('UNICEP token', () => {
   it('defaults to the shared instance and can be overridden', () => {
     const { unicep } = fakeUnicep();
-    expect(TestBed.inject(UNICEP).status().length).toBe(4);
+    expect(TestBed.inject(UNICEP).status().length).toBe(3);
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({ providers: [provideUnicep(unicep)] });
     expect(TestBed.inject(UNICEP)).toBe(unicep);

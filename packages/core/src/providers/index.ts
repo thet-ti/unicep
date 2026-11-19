@@ -16,13 +16,18 @@ export interface DefaultProvidersOptions extends HttpProviderOptions {
   apiKeys?: { awesomeapi?: string | undefined } | undefined;
 }
 
-/** All built-in providers, in the recommended priority order. */
+/**
+ * The recommended providers, in priority order: ViaCEP, BrasilAPI and OpenCEP.
+ *
+ * AwesomeAPI is opt-in because it may reject anonymous requests (especially from cloud
+ * servers). It is appended last when you pass its key in `apiKeys.awesomeapi`, or you can add
+ * `awesomeApi()` to your own provider list.
+ */
 export function defaultProviders(options: DefaultProvidersOptions = {}): CepProvider[] {
   const { apiKeys, ...http } = options;
-  return [
-    viaCep(http),
-    brasilApi(http),
-    openCep(http),
-    awesomeApi({ ...http, apiKey: apiKeys?.awesomeapi }),
-  ];
+  const providers = [viaCep(http), brasilApi(http), openCep(http)];
+  if (apiKeys?.awesomeapi) {
+    providers.push(awesomeApi({ ...http, apiKey: apiKeys.awesomeapi }));
+  }
+  return providers;
 }
