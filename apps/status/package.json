@@ -13,9 +13,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@astrojs/node": "^10.1.4",
+    "@astrojs/node": "^11.1.13",
     "@unicep/core": "workspace:*",
-    "astro": "^6.4.8"
+    "astro": "^7.4.12"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",

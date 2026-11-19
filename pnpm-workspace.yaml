@@ -4,3 +4,7 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: false
+# Astro 7.4.12 pins @astrojs/runtime@0.1.2, which was published less than a day before it was
+# installed (pnpm's default minimum release age). Remove this exclusion once it is older.
+minimumReleaseAgeExclude:
+  - "@astrojs/runtime@0.1.2"
