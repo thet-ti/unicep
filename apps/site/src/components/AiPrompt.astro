@@ -1,0 +1,146 @@
+---
+import type { Locale } from '../i18n/ui';
+import { type Framework, buildPrompt, chatgptUrl, claudeUrl } from '../lib/prompts';
+
+interface Props {
+  framework: Framework;
+  /** Passed explicitly because this component is also rendered outside Starlight pages (llms.txt). */
+  locale: Locale;
+}
+
+const { framework, locale } = Astro.props;
+// `Astro.site` is not set when llms-full.txt renders this component, so fall back to a path.
+// llms-full.txt holds the default language (Portuguese); English has its own set.
+const docsPath = locale === 'en' ? '/_llms-txt/english.txt' : '/llms-full.txt';
+const docsUrl = Astro.site ? new URL(docsPath, Astro.site).href : docsPath;
+const prompt = buildPrompt(framework, locale, docsUrl);
+
+// llms-full.txt renders pages outside a Starlight route; there only the prompt text is useful.
+let inStarlightPage = true;
+try {
+  void Astro.locals.starlightRoute;
+} catch {
+  inStarlightPage = false;
+}
+
+const labels = {
+  'pt-br': { title: 'Prompt', copy: 'Copiar', copied: 'Copiado!', claude: 'Abrir no Claude', chatgpt: 'Abrir no ChatGPT' },
+  en: { title: 'Prompt', copy: 'Copy', copied: 'Copied!', claude: 'Open in Claude', chatgpt: 'Open in ChatGPT' },
+}[locale];
+---
+
+{
+  inStarlightPage ? (
+    <div class="ai-prompt not-content">
+      <div class="ai-prompt-bar">
+        <span class="ai-prompt-title">{labels.title}</span>
+        <div class="ai-prompt-actions">
+          <button type="button" data-copy={prompt} data-copied={labels.copied}>
+            {labels.copy}
+          </button>
+          <a href={claudeUrl(prompt)} target="_blank" rel="noopener noreferrer">
+            {labels.claude}
+          </a>
+          <a href={chatgptUrl(prompt)} target="_blank" rel="noopener noreferrer">
+            {labels.chatgpt}
+          </a>
+        </div>
+      </div>
+      <pre><code>{prompt}</code></pre>
+    </div>
+  ) : (
+    <pre><code>{prompt}</code></pre>
+  )
+}
+
+<script>
+  document.addEventListener('click', async (event) => {
+    const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>('[data-copy]');
+    if (!button) return;
+    try {
+      await navigator.clipboard.writeText(button.dataset.copy ?? '');
+    } catch {
+      return;
+    }
+    const label = button.textContent;
+    button.textContent = button.dataset.copied ?? '✓';
+    setTimeout(() => {
+      button.textContent = label;
+    }, 1500);
+  });
+</script>
+
+<style is:global>
+  .ai-prompt {
+    margin: 1rem 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #0a0a0a;
+    overflow: hidden;
+  }
+
+  .ai-prompt-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ai-prompt-title {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ai-prompt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ai-prompt-actions button,
+  .ai-prompt-actions a {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+  }
+
+  .ai-prompt-actions button:hover,
+  .ai-prompt-actions a:hover {
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+  }
+
+  .ai-prompt pre {
+    margin: 0;
+    padding: 16px;
+    overflow-x: auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+</style>
