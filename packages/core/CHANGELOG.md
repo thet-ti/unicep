@@ -1,5 +1,11 @@
 # @unicep/core
 
+## 0.1.1
+
+### Patch Changes
+
+- 668db2e: Link the documentation site (unicep.thet.dev) from the package pages.
+
 ## 0.1.0
 
 ### Minor Changes
