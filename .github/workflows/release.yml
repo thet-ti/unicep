@@ -4,7 +4,8 @@ name: Release
 #   1. A push to main with pending changesets opens/updates a "version packages" pull request.
 #   2. Merging that pull request publishes the new versions to npm (with provenance) and
 #      creates the GitHub releases.
-# Requires the NPM_TOKEN repository secret (an npm automation token able to publish @unicep/*).
+# Publishing uses npm trusted publishing (GitHub OIDC): each @unicep/* package on npmjs.com has
+# this repository and workflow configured as a trusted publisher, so no npm token is stored.
 on:
   push:
     branches: [main]
@@ -51,7 +52,8 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or newer; Node 22 ships npm 10.
+      - run: npm install --global npm@11
       - run: pnpm install --frozen-lockfile
       - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1
         with:
@@ -61,8 +63,4 @@ jobs:
           title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # The changesets action only checks NPM_TOKEN to decide between a token and trusted
-          # publishing; setup-node's .npmrc reads NODE_AUTH_TOKEN.
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
