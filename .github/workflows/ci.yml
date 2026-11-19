@@ -56,6 +56,8 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # The bindings and the site import the built @unicep/core.
+      - run: pnpm --filter "@unicep/core" build
       - run: pnpm --filter "./packages/*" test:coverage
       - run: pnpm --filter "./apps/*" test
 
