@@ -1,0 +1,17 @@
+# Code owners are automatically requested for review, and the "Protect main" ruleset requires
+# their approval. Later patterns take precedence over earlier ones.
+
+# Everything
+* @Ellathet
+
+# CI/CD, release and deploy configuration
+/.github/ @Ellathet
+/render.yaml @Ellathet
+/.changeset/ @Ellathet
+
+# Dependencies and build configuration
+/package.json @Ellathet
+/pnpm-lock.yaml @Ellathet
+/pnpm-workspace.yaml @Ellathet
+/turbo.json @Ellathet
+**/package.json @Ellathet
