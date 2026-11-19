@@ -30,8 +30,6 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
     <title>{title}</title>
   </head>
   <body>
-    <div class="glow" aria-hidden="true"></div>
-
     <header class="site-header">
       <div class="container bar">
         <a class="brand" href="/" aria-label="unicep status">
@@ -70,13 +68,10 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
 
     <footer class="site-footer">
       <div class="container foot">
-        <p class="credit">
-          <span>Built by</span>
-          <img src="/thet-logo.png" alt=".thet" width="214" height="82" />
-        </p>
-        <p class="note">
-          <a href={repositoryUrl} rel="noopener noreferrer">unicep</a> · Brazilian CEP lookup with
-          automatic provider fallback.
+        <img src="/thet-logo.png" alt=".thet" width="214" height="82" />
+        <p>Brazilian CEP lookup with automatic provider fallback.</p>
+        <p class="legal">
+          <a href={repositoryUrl} rel="noopener noreferrer">Open source</a> under the MIT license.
         </p>
       </div>
     </footer>
@@ -87,11 +82,12 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
   :root {
     /* .thet identity: black canvas, white type, magenta accent. */
     --bg: #000000;
-    --surface: #07090f;
-    --surface-hover: #0b0e16;
-    --border: #1e293b;
+    --surface: #0a0a0a;
+    --surface-hover: #111111;
+    --border: #1f1f1f;
+    --border-hover: #333333;
     --text: #fafafa;
-    --muted: #94a3b8;
+    --muted: #a1a1a1;
     --accent: #e52a9a;
     --accent-bright: #ff03f2;
     --ok: #3ddc97;
@@ -129,14 +125,6 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
     color: inherit;
   }
 
-  .glow {
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 420px;
-    pointer-events: none;
-    background: radial-gradient(60% 100% at 50% 0%, rgba(229, 42, 154, 0.22), transparent 70%);
-  }
-
   .container {
     width: 100%;
     max-width: 960px;
@@ -168,20 +156,19 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
   }
 
   .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
     text-decoration: none;
     font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: -0.02em;
   }
 
+  /* Same size as the lowercase letters (1ex = x-height), sitting on the baseline. */
   .brand-dot {
-    width: 9px;
-    height: 9px;
-    margin-top: 9px;
-    border-radius: 2px;
+    display: inline-block;
+    width: 1ex;
+    height: 1ex;
+    margin-right: 0.18em;
+    border-radius: 0.14ex;
     background: linear-gradient(135deg, #ec13ca, var(--accent-bright));
   }
 
@@ -223,7 +210,7 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
     font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
     font-size: 0.8rem;
     font-weight: 500;
-    color: var(--accent);
+    color: var(--muted);
   }
 
   .site-footer {
@@ -232,37 +219,36 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
 
   .foot {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 28px;
-    padding-bottom: 28px;
+    gap: 10px;
+    padding-top: 40px;
+    padding-bottom: 40px;
     color: var(--muted);
     font-size: 0.85rem;
+    text-align: center;
   }
 
   .foot p {
     margin: 0;
   }
 
-  .credit {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .credit img {
+  .foot img {
     display: block;
     width: auto;
-    height: 34px;
+    height: 24px;
   }
 
-  .note a {
+  .foot a {
     color: var(--text);
     text-decoration: none;
   }
-  .note a:hover {
-    color: var(--accent);
+  .foot a:hover {
+    text-decoration: underline;
+  }
+
+  .legal {
+    font-size: 0.78rem;
+    opacity: 0.7;
   }
 </style>

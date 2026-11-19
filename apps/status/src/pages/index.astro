@@ -76,7 +76,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
 
   .eyebrow {
     margin: 0 0 12px;
-    color: var(--accent);
+    color: var(--muted);
     font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
@@ -141,7 +141,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
   }
 
   .card:hover {
-    border-color: rgba(229, 42, 154, 0.5);
+    border-color: var(--border-hover);
     background: var(--surface-hover);
   }
 
@@ -164,7 +164,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
     text-decoration: none;
   }
   .card h2 a:hover {
-    color: var(--accent);
+    text-decoration: underline;
   }
 
   .badge,
