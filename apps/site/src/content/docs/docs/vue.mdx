@@ -5,7 +5,7 @@ description: O composable useCep para Vue 3.
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-`@unicep/vue` traz o composable `useCep`. Requer Vue 3.3 ou superior.
+O `@unicep/vue` traz o composable `useCep`, que funciona com Vue 3.3 ou mais novo.
 
 <Tabs syncKey="pm">
 <TabItem label="npm">
@@ -38,7 +38,7 @@ bun add @unicep/vue
 </TabItem>
 </Tabs>
 
-O `@unicep/core` é instalado junto, como dependência.
+O `@unicep/core` vem junto como dependência, então você não precisa instalá-lo à parte.
 
 ## Uso
 
@@ -59,9 +59,10 @@ const { data, error, isLoading } = useCep(cep);
 </template>
 ```
 
-A consulta só roda quando o valor é um CEP válido (com ou sem hífen). Entradas parciais são
-ignoradas, então dá para ligar o composable direto a um campo de texto. Quando o CEP muda, o
-resultado anterior some e a requisição em andamento é cancelada.
+O composable só busca quando o valor é um CEP completo e válido (com ou sem hífen). Enquanto a
+pessoa ainda está digitando, ele não faz nada, então você pode ligá-lo direto ao campo de
+texto. Se o CEP muda no meio da busca, o resultado antigo some e a requisição anterior é
+cancelada.
 
 ## API
 
@@ -76,15 +77,16 @@ useCep(cep: MaybeRefOrGetter<string | null | undefined>, options?: {
 }
 ```
 
-`cep` e `enabled` aceitam um ref, um getter ou um valor simples. `error` é um dos
-[erros](/docs/errors) da unicep, como `CepNotFoundError` ou `AllProvidersFailedError`.
+Tanto o `cep` quanto o `enabled` aceitam um ref, um getter ou um valor simples. O `error` é um
+dos [erros da unicep](/docs/errors), como `CepNotFoundError` ou `AllProvidersFailedError`, então
+dá para mostrar uma mensagem diferente para cada caso.
 
-## Providers e configurações próprias
+## Usando os seus próprios providers e opções
 
 ```ts
 import { Unicep, viaCep, brasilApi } from '@unicep/core';
 
-// Crie uma vez, num módulo, para manter o estado dos circuit breakers.
+// Crie uma vez, num módulo, para não perder o estado dos circuit breakers.
 const unicep = new Unicep({
   providers: [viaCep(), brasilApi()],
   timeoutMs: 3000,
@@ -94,4 +96,4 @@ const unicep = new Unicep({
 const { data } = useCep(cep, { unicep });
 ```
 
-Veja [Providers](/docs/providers) e [Núcleo](/docs/core) para todas as opções.
+Todas as opções estão em [Providers](/docs/providers) e no [Núcleo](/docs/core).

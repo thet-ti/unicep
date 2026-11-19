@@ -1,10 +1,10 @@
 ---
 title: Núcleo (@unicep/core)
-description: A classe Unicep, opções, retry, cache, cancelamento e helpers.
+description: A classe Unicep, as opções, retry, cache, cancelamento e os helpers.
 ---
 
-`@unicep/core` é TypeScript puro, sem dependência de framework. Funciona no navegador e no
-Node.js 20 ou superior (usa o `fetch` nativo).
+O `@unicep/core` é TypeScript puro, sem depender de nenhum framework. Ele roda no navegador e no
+Node.js 20 ou mais novo, usando o `fetch` nativo.
 
 ## Criando uma instância
 
@@ -20,14 +20,15 @@ const unicep = new Unicep({
 });
 ```
 
-Crie a instância **uma vez** e reutilize. O estado dos circuit breakers e o cache vivem nela.
+Crie a instância **uma vez** e reaproveite em todo o app. É nela que vivem o estado dos circuit
+breakers e o cache, então criar uma nova a cada consulta joga tudo isso fora.
 
-| Opção | Padrão | Descrição |
+| Opção | Padrão | O que faz |
 | --- | --- | --- |
-| `providers` | obrigatório | Providers em ordem de prioridade. Os nomes precisam ser únicos. |
-| `timeoutMs` | `5000` | Timeout por provider e por tentativa. |
-| `circuitBreaker.failureThreshold` | `3` | Falhas consecutivas até o circuito abrir. |
-| `circuitBreaker.resetTimeoutMs` | `30000` | Espera antes de uma requisição de teste. |
+| `providers` | obrigatório | Os providers, em ordem de prioridade. Os nomes não podem se repetir. |
+| `timeoutMs` | `5000` | Quanto esperar cada provider, a cada tentativa. |
+| `circuitBreaker.failureThreshold` | `3` | Quantas falhas seguidas até o circuito abrir. |
+| `circuitBreaker.resetTimeoutMs` | `30000` | Quanto esperar antes de tentar uma requisição de teste. |
 | `retry` | desligado | Veja [Retry](#retry). |
 | `cache` | desligado | Veja [Cache](#cache). |
 
@@ -37,25 +38,26 @@ Crie a instância **uma vez** e reutilize. O estado dos circuit breakers e o cac
 const address = await unicep.lookup('01310-100');
 ```
 
-`lookup(cep, options?)` aceita o CEP com ou sem hífen e devolve uma `Promise<Address>`.
+O `lookup(cep, options?)` aceita o CEP com ou sem hífen e devolve uma `Promise<Address>`.
 
 ```ts
 interface Address {
   cep: string;            // 8 dígitos, sem máscara
-  street: string;         // vazio para CEPs de cidades inteiras
+  street: string;         // vazio em CEPs de cidades inteiras
   complement?: string;
-  neighborhood: string;   // vazio para CEPs de cidades inteiras
+  neighborhood: string;   // vazio em CEPs de cidades inteiras
   city: string;
-  state: string;          // UF, por exemplo "SP"
+  state: string;          // a UF, por exemplo "SP"
   ibgeCode?: string;
-  provider: string;       // qual provider respondeu
+  provider: string;       // quem respondeu
 }
 ```
 
 ## Retry
 
-Por padrão, um provider que falha é pulado na hora. Para repetir o mesmo provider antes de
-passar para o próximo (útil com rede instável ou com um provider só), ligue o `retry`:
+Por padrão, quando um provider falha a unicep já passa para o próximo. Se você quiser dar mais
+uma chance ao mesmo provider antes de desistir (útil quando a rede é instável ou quando você só
+tem um provider), ligue o `retry`:
 
 ```ts
 const unicep = new Unicep({
@@ -67,27 +69,30 @@ const unicep = new Unicep({
 });
 ```
 
-Só falhas do provider são repetidas. "CEP não encontrado" e cancelamentos são definitivos. Um
-provider que falha em todas as tentativas conta como **uma** falha para o circuit breaker.
+Só falhas do provider são repetidas. "CEP não encontrado" e cancelamentos são definitivos, não
+adianta insistir. E um provider que falhou em todas as tentativas conta como **uma** falha só
+para o circuit breaker.
 
 ## Cache
 
-Ative o cache em memória para não repetir requisições do mesmo CEP:
+Se o seu app consulta os mesmos CEPs várias vezes, ligue o cache em memória e economize
+requisições:
 
 ```ts
 const unicep = new Unicep({
   providers: defaultProviders(),
   cache: {
     ttlMs: 5 * 60_000, // por quanto tempo um endereço é reaproveitado, padrão 5 minutos
-    maxEntries: 500,   // os menos usados saem primeiro, padrão 500
+    maxEntries: 500,   // quando enche, saem os menos usados, padrão 500
   },
 });
 
 unicep.clearCache();
 ```
 
-Só consultas bem-sucedidas entram no cache (não "CEP não encontrado" nem falhas). CEPs com e sem
-hífen compartilham a mesma entrada, e cada chamada recebe a sua própria cópia do endereço.
+Só consultas que deram certo entram no cache (nada de "não encontrado" nem de falhas). CEPs com
+e sem hífen usam a mesma entrada, e cada chamada recebe a sua própria cópia do endereço, então
+você pode mexer no objeto à vontade.
 
 ## Cancelamento
 
@@ -108,7 +113,7 @@ import { getDefaultUnicep } from '@unicep/core';
 const unicep = getDefaultUnicep(); // todos os providers embutidos, criada na primeira chamada
 ```
 
-É a instância usada pelos bindings de React, Vue e Angular quando você não passa a sua.
+É a instância que os bindings de React, Vue e Angular usam quando você não passa a sua.
 
 ## Helpers
 

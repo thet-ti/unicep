@@ -6,33 +6,34 @@ description: Como usar agentes de IA com a documentação da unicep, com llms.tx
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import AiPrompt from '../../../components/AiPrompt.astro';
 
-Esta documentação foi pensada para ser lida por agentes de IA tanto quanto por pessoas. Dá para
-pedir a um agente (Claude, ChatGPT, Cursor, Claude Code e outros) que implemente a consulta de CEP
-no seu projeto já com o contexto certo.
+Esta documentação foi escrita pensando tanto em pessoas quanto em agentes de IA. Então, se você
+prefere deixar o Claude, o ChatGPT, o Cursor ou o Claude Code fazerem o trabalho braçal, dá para
+pedir que eles implementem a consulta de CEP no seu projeto, já com o contexto certo.
 
 ## Botões em cada página
 
-No topo de cada página da documentação há dois botões:
+No topo de cada página tem dois botões:
 
-- **Copiar Markdown**: copia o conteúdo da página em Markdown limpo, pronto para colar num chat.
-- **Abrir**: abre a página já no Claude, no ChatGPT e em outros, com um pedido para o agente ler
-  a página e te ajudar.
+- **Copiar Markdown** copia o conteúdo da página em Markdown limpo, pronto para colar num chat.
+- **Abrir** abre a página direto no Claude, no ChatGPT e em outros, já com um pedido para o
+  agente ler a página e te ajudar.
 
 ## Arquivos para agentes
 
-| URL | Conteúdo |
+| URL | O que tem |
 | --- | --- |
-| `/llms.txt` | Índice da documentação, com um resumo do projeto e links. |
-| `/llms-full.txt` | Toda a documentação em português, em um único arquivo de texto. |
+| `/llms.txt` | Um índice da documentação, com um resumo do projeto e os links. |
+| `/llms-full.txt` | Toda a documentação em português, num único arquivo de texto. |
 | `/_llms-txt/english.txt` | A mesma documentação em inglês. |
-| `/docs/<página>.md` | Qualquer página em Markdown: basta acrescentar `.md` à URL. |
+| `/docs/<página>.md` | Qualquer página em Markdown: é só acrescentar `.md` à URL. |
 
-Aponte o agente para `/llms-full.txt` e ele terá todo o contexto de uma vez.
+Se você mandar o agente ler o `/llms-full.txt`, ele já fica com o contexto inteiro de uma vez.
 
 ## Prompts prontos
 
-Escolha o seu ambiente, copie o prompt e cole no seu agente, ou abra direto no Claude ou no
-ChatGPT. Cada prompt já traz um resumo da API e o link para a documentação completa.
+Escolha o seu ambiente, copie o prompt e cole no seu agente. Se preferir, abra direto no Claude
+ou no ChatGPT. Cada prompt já vem com um resumo da API e o link da documentação completa, então
+o agente não começa do zero.
 
 <Tabs syncKey="framework">
 <TabItem label="React">
@@ -51,8 +52,8 @@ ChatGPT. Cada prompt já traz um resumo da API e o link para a documentação co
 
 ## Dicas
 
-- Se o agente roda no seu terminal (por exemplo, o Claude Code), cole o prompt direto nele: ele
-  consegue ler o `llms-full.txt` e alterar o seu projeto.
-- Peça para ele criar a instância do `Unicep` uma única vez e ligar o [cache](/docs/core#cache).
-- Revise o código gerado: confirme que os [erros](/docs/errors) são tratados e que o
-  [uso dos providers](/docs/providers#uso-responsável) é responsável.
+- Se o seu agente roda no terminal (o Claude Code, por exemplo), cole o prompt direto nele. Ele
+  consegue ler a documentação e alterar o seu projeto sozinho.
+- Peça para criar a instância do `Unicep` uma vez só e ligar o [cache](/docs/core#cache).
+- Dê uma olhada no que foi gerado: veja se os [erros](/docs/errors) estão tratados e se o uso
+  dos [providers](/docs/providers#usando-com-responsabilidade) está responsável.

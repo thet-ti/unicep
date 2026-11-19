@@ -1,13 +1,17 @@
 ---
 title: Getting started
-description: Install unicep and make your first CEP lookup.
+description: Install unicep and make your first CEP lookup in a few minutes.
 ---
 
 import { Tabs, TabItem, LinkCard, CardGrid } from '@astrojs/starlight/components';
 
-**unicep** queries several public CEP services behind one interface. When a service goes down, it
-detects the failure with a circuit breaker and switches to the next one, always returning the
-same `Address` object. It works in browsers and Node.js 20 or newer.
+Everyone who needs to look up a CEP ends up writing the same class again, and everyone has been
+bitten by ViaCEP (or any other service) going down at the worst possible moment.
+
+**unicep** takes care of that. It queries several CEP services behind a single interface and, if
+one of them goes down, it moves on to the next one by itself. You call one function and always get
+the same `Address` object back, no matter who answered. It runs in the browser and on Node.js 20
+or newer.
 
 ## Installation
 
@@ -49,7 +53,7 @@ import { Unicep, defaultProviders } from '@unicep/core';
 
 const unicep = new Unicep({ providers: defaultProviders() });
 
-const address = await unicep.lookup('01310-100'); // the hyphen is optional
+const address = await unicep.lookup('01310-100'); // with or without the hyphen
 // {
 //   cep: '01310100',
 //   street: 'Avenida Paulista',
@@ -62,24 +66,25 @@ const address = await unicep.lookup('01310-100'); // the hyphen is optional
 // }
 ```
 
-`complement` and `ibgeCode` are optional because not every provider returns them. For CEPs that
-cover a whole city, `street` and `neighborhood` are empty strings. The `provider` field tells you
-which service answered.
+The `provider` field tells you who answered. `complement` and `ibgeCode` might be missing,
+because not every service returns them. And for CEPs that cover a whole city, `street` and
+`neighborhood` come back as empty strings.
 
-## Pick your framework
+## Using it with your framework
 
-The core is plain TypeScript and works in any backend or frontend. If you use a framework, the
-bindings look up on their own as soon as the value becomes a valid CEP.
+The core is plain TypeScript and works anywhere. If you use React, Vue or Angular, the bindings
+make it even easier: they look things up by themselves as soon as the user finishes typing a
+valid CEP.
 
 <CardGrid>
-  <LinkCard title="React" description="useCep hook" href="/en/docs/react" />
-  <LinkCard title="Vue" description="useCep composable" href="/en/docs/vue" />
+  <LinkCard title="React" description="The useCep hook" href="/en/docs/react" />
+  <LinkCard title="Vue" description="The useCep composable" href="/en/docs/vue" />
   <LinkCard title="Angular" description="injectCep with signals and RxJS" href="/en/docs/angular" />
   <LinkCard title="Implement with AI" description="Ready-made prompts and llms.txt" href="/en/docs/ai" />
 </CardGrid>
 
-## Next steps
+## Where to go next
 
-- Understand [how unicep works](/en/docs/how-it-works): fallback, circuit breaker and errors.
-- See the [core guide](/en/docs/core) for timeout, retry, cache and cancellation.
-- Configure or write your own [providers](/en/docs/providers).
+- Want to know what happens under the hood? See [how unicep works](/en/docs/how-it-works).
+- Want to tweak the timeout, retry or cache? It is all in the [core guide](/en/docs/core).
+- Want to change the order of the services or plug in your own? Head to [providers](/en/docs/providers).

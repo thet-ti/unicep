@@ -3,12 +3,12 @@ title: How it works
 description: Providers, fallback, circuit breaker and what counts as a failure.
 ---
 
-unicep has two moving parts:
+Under the hood, unicep is pretty simple. There are just two pieces:
 
-- **Provider**: an adapter for one CEP service. It makes the HTTP call and maps the response to the
-  normalized `Address` object.
-- **`Unicep`**: takes an ordered list of providers, protects each one with a circuit breaker and
-  tries them one by one until one answers.
+- **Provider**: the adapter for one CEP service. It makes the HTTP call and turns the response
+  into the `Address` object, which is the same for everyone.
+- **`Unicep`**: takes a list of providers, puts a circuit breaker on each one and tries them one
+  by one until somebody answers.
 
 ```
  your app ──▶ Unicep ──▶ ViaCEP ──▶ BrasilAPI ──▶ OpenCEP ──▶ AwesomeAPI
@@ -16,43 +16,44 @@ unicep has two moving parts:
                 └── always returns the same Address object
 ```
 
-## The path of a lookup
+## What happens in a lookup
 
-1. The CEP is validated (`01310100` or `01310-100`). An invalid CEP throws `InvalidCepError`
-   without making any request.
-2. If the [cache](/en/docs/core#cache) is enabled and the CEP is in it, the address is returned
+1. First the CEP is validated (`01310100` or `01310-100`). If it is not a CEP, unicep throws an
+   `InvalidCepError` right away, without making any request.
+2. If the [cache](/en/docs/core#cache) is on and the CEP is already in it, the address comes back
    immediately.
-3. Providers are tried in the order you passed them. A provider whose circuit is open is skipped.
-4. Each attempt has a timeout. With [retry](/en/docs/core#retry) enabled, the same provider is
-   retried before moving on to the next one.
-5. The first provider that answers wins. The result carries its name in `provider`.
+3. Then it tries the providers in the order you gave. Any provider with an open circuit is
+   skipped.
+4. Every attempt has a timeout. If you turned on [retry](/en/docs/core#retry), the same provider
+   gets a few more chances before unicep gives up on it.
+5. The first one to answer wins, and the result carries its name in `provider`.
 
 ## Circuit breaker
 
-Each provider has its own circuit breaker, which counts **consecutive** failures:
+Each provider has its own circuit breaker, which keeps an eye on **consecutive** failures:
 
-| State | What happens |
+| State | What it means |
 | --- | --- |
-| `closed` | Normal operation. Requests go through. |
-| `open` | After `failureThreshold` failures in a row (default 3), the provider is skipped without making a request. |
-| `half-open` | After `resetTimeoutMs` (default 30 s), one trial request decides whether the circuit closes or opens again. |
+| `closed` | All good. Requests go through. |
+| `open` | After `failureThreshold` failures in a row (3 by default), the provider is skipped without even trying the request. |
+| `half-open` | Once `resetTimeoutMs` has passed (30 seconds by default), unicep risks one trial request. If it works, the circuit closes. If not, it opens again. |
 
-That way a service that is down stops slowing every lookup: unicep goes straight to the next
-provider until the first one recovers.
+The win is that a service that is down stops slowing every lookup. Instead of waiting for the
+timeout every time, unicep goes straight to the next one until the first is back.
 
 ## What counts as a failure
 
-| Situation | Counts against the breaker? | What unicep does |
+| What happened | Counts against the breaker? | What unicep does |
 | --- | --- | --- |
-| Network error, timeout, HTTP 5xx or 429, malformed response | Yes | Tries the next provider |
-| "CEP not found" | No | Tries the next provider, because coverage differs between services |
-| Cancellation through an `AbortSignal` | No | Stops and rejects with the abort reason |
+| Network error, timeout, HTTP 5xx or 429, odd response | Yes | Tries the next provider |
+| "CEP not found" | No | Also tries the next one, because coverage differs from service to service |
+| Cancellation through an `AbortSignal` | No | Stops everything and rejects with the abort reason |
 
-If every provider that answered said "not found", you get `CepNotFoundError`. If none could
-answer, you get `AllProvidersFailedError`, with one error per provider. See
-[Errors](/en/docs/errors).
+If every provider that answered said "not found", you get a `CepNotFoundError`. If none of them
+could answer, the error is an `AllProvidersFailedError`, with one error per provider. The details
+are in [Errors](/en/docs/errors).
 
-## Watching the state
+## Peeking at the state
 
 ```ts
 unicep.status();
@@ -63,5 +64,5 @@ unicep.status();
 // ]
 ```
 
-The project's [status page](/en/status) uses exactly this to show, in real time, whether each
-provider is online, its latency and the state of its circuit.
+The project's [status page](/en/status) uses exactly this: it shows, in real time, whether each
+provider is online, how long it takes to answer and how its circuit is doing.

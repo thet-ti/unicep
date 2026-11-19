@@ -1,25 +1,26 @@
 ---
 title: Providers
-description: Providers embutidos, configuração, ordem, providers próprios e uso responsável.
+description: Os providers embutidos, como configurar, ordenar, criar o seu e usar com responsabilidade.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Um **provider** é o adaptador de um serviço de CEP. A unicep traz quatro, todos funcionam direto
-do navegador (os serviços enviam CORS) e devolvem o mesmo objeto `Address`.
+Um **provider** é o adaptador de um serviço de CEP. A unicep já vem com quatro. Todos funcionam
+direto no navegador (os serviços liberam CORS) e todos devolvem o mesmo objeto `Address`.
 
-| Função | Serviço | Devolve `complement` | Devolve `ibgeCode` |
+| Função | Serviço | Traz `complement` | Traz `ibgeCode` |
 | --- | --- | --- | --- |
 | `viaCep()` | [ViaCEP](https://viacep.com.br) | sim | sim |
 | `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | não | sim |
 | `openCep()` | [OpenCEP](https://opencep.com) | sim | sim |
 | `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | não | sim |
 
-`defaultProviders()` devolve os quatro nessa ordem.
+O `defaultProviders()` devolve os quatro, nessa ordem.
 
 ## Escolhendo e ordenando
 
-A ordem da lista é a ordem de prioridade. Passe só os que você quer, na ordem que preferir:
+A ordem da lista é a ordem de prioridade: o primeiro é tentado antes dos outros. Passe só os que
+você quer usar, na ordem que preferir:
 
 ```ts
 import { Unicep, brasilApi, openCep, viaCep } from '@unicep/core';
@@ -33,10 +34,10 @@ const unicep = new Unicep({
 
 Todos os providers embutidos aceitam as mesmas opções:
 
-| Opção | Descrição |
+| Opção | O que faz |
 | --- | --- |
-| `fetch` | Sua própria implementação de `fetch` (padrão `globalThis.fetch`). Útil para testes, proxies e runtimes customizados. |
-| `baseUrl` | Troca o endereço do serviço, para usar um proxy ou uma instância própria. |
+| `fetch` | Usa a sua própria implementação de `fetch` (o padrão é o `globalThis.fetch`). Boa para testes, proxies e ambientes diferentes. |
+| `baseUrl` | Troca o endereço do serviço, para você usar um proxy ou uma instância própria. |
 
 ```ts
 import { Unicep, brasilApi, viaCep } from '@unicep/core';
@@ -49,16 +50,17 @@ const unicep = new Unicep({
 });
 ```
 
-Para aplicar as mesmas opções a todos: `defaultProviders({ fetch: meuFetch })`.
+Para aplicar as mesmas opções a todos de uma vez: `defaultProviders({ fetch: meuFetch })`.
 
 <Aside type="note">
-  No navegador, a requisição de cada provider só envia o cabeçalho `Accept`, então não gera
-  preflight de CORS. Se você usar um proxy próprio, mantenha isso.
+  No navegador, cada provider só envia o cabeçalho `Accept`, então a requisição não gera
+  preflight de CORS. Se você usar um proxy seu, tente manter assim.
 </Aside>
 
-## Criando um provider
+## Criando o seu provider
 
-Implemente a interface `CepProvider`:
+Se você quer usar um serviço que a unicep não tem (a API da sua empresa, por exemplo), basta
+implementar a interface `CepProvider`:
 
 ```ts
 import { CepNotFoundError, ProviderError, type CepProvider } from '@unicep/core';
@@ -82,25 +84,25 @@ const meuProvider: CepProvider = {
 };
 ```
 
-Regras:
+Algumas regrinhas:
 
-- Devolva o endereço **sem** o campo `provider`; a unicep preenche com o `name`.
-- Lance `CepNotFoundError` quando o CEP não existe, e qualquer outro erro (de preferência
-  `ProviderError`) para falhas do serviço. Só falhas contam para o circuit breaker.
-- Repasse o `signal` ao `fetch`, para que timeout e cancelamento funcionem.
-- O `name` precisa ser único na instância.
+- Devolva o endereço **sem** o campo `provider`. A unicep preenche com o `name` por você.
+- Quando o CEP não existe, lance um `CepNotFoundError`. Para qualquer falha do serviço, lance
+  outro erro (de preferência um `ProviderError`). Só as falhas contam para o circuit breaker.
+- Repasse o `signal` para o `fetch`, senão o timeout e o cancelamento não funcionam.
+- O `name` precisa ser único dentro da instância.
 
-## Uso responsável
+## Usando com responsabilidade
 
-A unicep **não fornece, hospeda nem é dona** de nenhum dado ou API de CEP. Ela é um cliente que
-consulta serviços públicos independentes, cada um com seus próprios termos, limites e
-disponibilidade. O projeto não é afiliado a nenhum deles.
+A unicep **não fornece, não hospeda e não é dona** de nenhum dado ou API de CEP. Ela é só um
+cliente que consulta serviços públicos independentes, cada um com os seus próprios termos,
+limites e disponibilidade. O projeto não tem nenhuma afiliação com eles.
 
 <Aside type="caution" title="Seja um bom cidadão">
-  - Ative o [cache](/docs/core#cache) para não repetir a mesma consulta.
+  - Ligue o [cache](/docs/core#cache) para não repetir a mesma consulta à toa.
   - Não use a unicep para varrer ou validar bases inteiras. Alguns serviços avisam que uso
-    automatizado intenso pode bloquear o acesso. Para volume, use uma base baixável (o OpenCEP
-    publica uma) ou hospede a sua.
-  - Leia os termos de cada serviço. Em uso comercial crítico, considere falar com os
+    automatizado intenso pode bloquear o seu acesso. Se você precisa de volume, use uma base
+    que dê para baixar (o OpenCEP publica uma) ou hospede a sua.
+  - Leia os termos de cada serviço. Para uso comercial crítico, vale conversar com os
     mantenedores ou rodar uma instância própria pela opção `baseUrl`.
 </Aside>

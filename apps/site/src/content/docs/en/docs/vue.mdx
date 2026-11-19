@@ -5,7 +5,7 @@ description: The useCep composable for Vue 3.
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-`@unicep/vue` provides the `useCep` composable. It requires Vue 3.3 or newer.
+`@unicep/vue` gives you the `useCep` composable, which works with Vue 3.3 or newer.
 
 <Tabs syncKey="pm">
 <TabItem label="npm">
@@ -38,7 +38,7 @@ bun add @unicep/vue
 </TabItem>
 </Tabs>
 
-`@unicep/core` is installed as a dependency.
+`@unicep/core` comes along as a dependency, so you do not need to install it separately.
 
 ## Usage
 
@@ -59,9 +59,10 @@ const { data, error, isLoading } = useCep(cep);
 </template>
 ```
 
-The lookup runs only when the value is a valid CEP (with or without hyphen), so partial input is
-ignored and you can bind the composable straight to a text field. When the CEP changes, the
-previous result is dropped and the in-flight request is cancelled.
+The composable only looks things up when the value is a complete, valid CEP (with or without the
+hyphen). While the person is still typing it does nothing, so you can wire it straight to a text
+field. If the CEP changes mid-request, the old result goes away and the previous request is
+cancelled.
 
 ## API
 
@@ -76,15 +77,16 @@ useCep(cep: MaybeRefOrGetter<string | null | undefined>, options?: {
 }
 ```
 
-`cep` and `enabled` accept a ref, a getter or a plain value. `error` is one of the unicep
-[errors](/en/docs/errors), such as `CepNotFoundError` or `AllProvidersFailedError`.
+Both `cep` and `enabled` accept a ref, a getter or a plain value. `error` is one of the
+[unicep errors](/en/docs/errors), such as `CepNotFoundError` or `AllProvidersFailedError`, so you
+can show a different message for each case.
 
-## Custom providers or settings
+## Using your own providers and options
 
 ```ts
 import { Unicep, viaCep, brasilApi } from '@unicep/core';
 
-// Create it once, in a module, so circuit breaker state is kept.
+// Create it once, in a module, so you do not lose the circuit breaker state.
 const unicep = new Unicep({
   providers: [viaCep(), brasilApi()],
   timeoutMs: 3000,
@@ -94,4 +96,4 @@ const unicep = new Unicep({
 const { data } = useCep(cep, { unicep });
 ```
 
-See [Providers](/en/docs/providers) and [Core](/en/docs/core) for every option.
+Every option is covered in [Providers](/en/docs/providers) and [Core](/en/docs/core).

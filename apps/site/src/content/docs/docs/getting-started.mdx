@@ -1,13 +1,16 @@
 ---
 title: Primeiros passos
-description: Instale a unicep e faça a sua primeira consulta de CEP.
+description: Instale a unicep e faça a sua primeira consulta de CEP em poucos minutos.
 ---
 
 import { Tabs, TabItem, LinkCard, CardGrid } from '@astrojs/starlight/components';
 
-A **unicep** consulta vários serviços públicos de CEP por trás de uma única interface. Quando um
-serviço cai, ela detecta a falha com um circuit breaker e troca para o próximo, devolvendo sempre
-o mesmo objeto `Address`. Funciona no navegador e no Node.js 20 ou superior.
+Todo mundo que precisa buscar um CEP acaba escrevendo a mesma classe de novo, e todo mundo
+já sofreu com o ViaCEP (ou qualquer outro serviço) saindo do ar bem na hora errada.
+
+A **unicep** resolve isso. Ela consulta vários serviços de CEP por trás de uma única interface e,
+se um deles cair, passa sozinha para o próximo. Você chama uma função e recebe sempre o mesmo
+objeto `Address`, não importa quem respondeu. Roda no navegador e no Node.js 20 ou mais novo.
 
 ## Instalação
 
@@ -49,7 +52,7 @@ import { Unicep, defaultProviders } from '@unicep/core';
 
 const unicep = new Unicep({ providers: defaultProviders() });
 
-const address = await unicep.lookup('01310-100'); // o hífen é opcional
+const address = await unicep.lookup('01310-100'); // com ou sem hífen
 // {
 //   cep: '01310100',
 //   street: 'Avenida Paulista',
@@ -62,24 +65,25 @@ const address = await unicep.lookup('01310-100'); // o hífen é opcional
 // }
 ```
 
-`complement` e `ibgeCode` são opcionais, porque nem todo provider devolve esses campos. Para CEPs
-de cidades inteiras, `street` e `neighborhood` vêm como string vazia. O campo `provider` diz qual
-serviço respondeu.
+O campo `provider` conta quem respondeu. Já `complement` e `ibgeCode` podem não vir, porque
+nem todo serviço devolve essas informações. E em CEPs que cobrem uma cidade inteira, `street` e
+`neighborhood` chegam como texto vazio.
 
-## Escolha o seu framework
+## Usando com o seu framework
 
-O núcleo é TypeScript puro e serve para qualquer backend ou frontend. Para quem usa um framework,
-há bindings que consultam sozinhos assim que o valor vira um CEP válido.
+O núcleo é TypeScript puro e funciona em qualquer lugar. Se você usa React, Vue ou Angular, os
+bindings deixam tudo ainda mais simples: eles buscam sozinhos assim que o usuário termina de
+digitar um CEP válido.
 
 <CardGrid>
-  <LinkCard title="React" description="Hook useCep" href="/docs/react" />
-  <LinkCard title="Vue" description="Composable useCep" href="/docs/vue" />
+  <LinkCard title="React" description="O hook useCep" href="/docs/react" />
+  <LinkCard title="Vue" description="O composable useCep" href="/docs/vue" />
   <LinkCard title="Angular" description="injectCep com signals e RxJS" href="/docs/angular" />
   <LinkCard title="Implementar com IA" description="Prompts prontos e llms.txt" href="/docs/ai" />
 </CardGrid>
 
-## Próximos passos
+## Para onde ir agora
 
-- Entenda [como a unicep funciona](/docs/how-it-works): fallback, circuit breaker e erros.
-- Veja o [guia do núcleo](/docs/core) para timeout, retry, cache e cancelamento.
-- Configure ou crie [providers](/docs/providers).
+- Quer entender o que acontece por baixo? Veja [como a unicep funciona](/docs/how-it-works).
+- Quer ajustar timeout, retry ou cache? Está tudo no [guia do núcleo](/docs/core).
+- Quer trocar a ordem dos serviços ou plugar o seu? Passe pelos [providers](/docs/providers).
