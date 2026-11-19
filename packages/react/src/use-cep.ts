@@ -1,14 +1,12 @@
-import {
-  type Address,
-  getDefaultUnicep,
-  isValidCep,
-  normalizeCep,
-  type Unicep,
-} from '@unicep/core';
+import { type Address, isValidCep, normalizeCep, type Unicep } from '@unicep/core';
 import { useEffect, useState } from 'react';
+import { useUnicep } from './context';
 
 export interface UseCepOptions {
-  /** `Unicep` instance to use. Defaults to a shared instance with all built-in providers. */
+  /**
+   * `Unicep` instance to use. Defaults to the one from the nearest `UnicepProvider`, or to a
+   * shared instance with the default providers.
+   */
   unicep?: Unicep | undefined;
   /** Set to `false` to pause lookups. Default: `true`. */
   enabled?: boolean | undefined;
@@ -32,14 +30,15 @@ interface Settled {
  * Partial input is ignored, so it is safe to bind directly to a text field.
  */
 export function useCep(cep: string | null | undefined, options: UseCepOptions = {}): UseCepResult {
-  const { unicep, enabled = true } = options;
+  const contextual = useUnicep();
+  const { unicep = contextual, enabled = true } = options;
   const key = enabled && cep && isValidCep(cep) ? normalizeCep(cep) : undefined;
   const [settled, setSettled] = useState<Settled>();
 
   useEffect(() => {
     if (!key) return;
     const controller = new AbortController();
-    (unicep ?? getDefaultUnicep()).lookup(key, { signal: controller.signal }).then(
+    unicep.lookup(key, { signal: controller.signal }).then(
       (data) => setSettled({ key, data }),
       (error: unknown) => {
         if (controller.signal.aborted) return;

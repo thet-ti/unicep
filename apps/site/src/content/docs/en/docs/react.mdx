@@ -83,6 +83,36 @@ useCep(cep: string | null | undefined, options?: {
 `error` is one of the [unicep errors](/en/docs/errors), such as `CepNotFoundError` or
 `AllProvidersFailedError`.
 
+## Global provider and `useUnicep`
+
+To avoid passing the instance on every call, wrap the app in a `UnicepProvider`. `useCep` and
+`useUnicep` will use it:
+
+```tsx
+import { Unicep, defaultProviders } from '@unicep/core';
+import { UnicepProvider } from '@unicep/react';
+
+const unicep = new Unicep({
+  providers: defaultProviders({ order: 'viacep,brasilapi' }),
+  cache: {},
+});
+
+root.render(
+  <UnicepProvider unicep={unicep}>
+    <App />
+  </UnicepProvider>,
+);
+```
+
+`useUnicep()` returns the instance, for imperative lookups such as in a form submit handler:
+
+```tsx
+const unicep = useUnicep();
+const address = await unicep.lookup(cep);
+```
+
+Without a `UnicepProvider`, it returns the shared default instance.
+
 ## Custom providers and options
 
 ```tsx
