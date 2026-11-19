@@ -13,7 +13,9 @@
       "!**/coverage",
       "!**/.turbo",
       "!pnpm-lock.yaml",
-      "!.changeset/*.md"
+      "!.changeset/*.md",
+      "!**/*.astro",
+      "!**/.astro"
     ]
   },
   "formatter": {
