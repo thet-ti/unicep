@@ -50,6 +50,18 @@ readonly cep = injectCep(() => this.value());
 All bindings use a shared default instance with the built-in providers. Pass `unicep` (or use
 `provideUnicep` in Angular) to customize providers, timeout or circuit breaker.
 
+## Status page
+
+[`apps/status`](apps/status) is an Astro (SSR) page that shows, for each built-in provider,
+whether it is online, its latency and the state of its circuit breaker. Checks are shared between
+visitors and refreshed at most once a minute.
+
+```bash
+pnpm --filter @unicep/status dev
+```
+
+A [Render](https://render.com) blueprint is included in [`render.yaml`](render.yaml).
+
 ## Development
 
 Requirements: Node.js >= 20 and [pnpm](https://pnpm.io).
