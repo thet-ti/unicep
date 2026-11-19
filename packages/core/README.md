@@ -158,6 +158,19 @@ const unicep = new Unicep({
 
 All built-in services send CORS headers, so they work from the browser.
 
+### Disclaimer and responsible use
+
+`@unicep/core` does not provide, host or own any CEP data or API: it only queries the services
+above, which are independent and have their own terms, limits and availability. This project is
+not affiliated with, endorsed by or sponsored by any of them, and their names belong to their
+respective owners. The software is provided "as is" under the MIT license, with no warranty.
+
+Please use these free services responsibly: enable the [cache](#cache), do not crawl or validate
+entire databases (some services warn that heavy automated use may get you blocked; for bulk
+needs use a downloadable database or host your own), and read each service's terms. For
+commercial or business-critical use, consider contacting the maintainers or running your own
+instance through the `baseUrl` option.
+
 ### Custom provider
 
 ```ts
