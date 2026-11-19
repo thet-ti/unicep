@@ -78,7 +78,9 @@ need Node >= 20), and deploys to Render (`render.yaml`, Node adapter).
 - **Look:** the .thet identity everywhere, including Starlight (`src/styles`): pure black, neutral
   grays and magenta only on the brand marks. The site is dark only.
 - **Environment:** `SITE_URL` (public address, defaults to Render's `RENDER_EXTERNAL_URL`, then
-  localhost) feeds `llms.txt` and the sitemap.
+  localhost) feeds `llms.txt` and the sitemap. `AWESOMEAPI_KEY` (secret, set in the Render
+  dashboard) is sent to AwesomeAPI by the status page, because that service rejects anonymous
+  requests from Render's network. It is only ever used server side.
 
 There is no server package: `@unicep/core` is already usable on the backend. Bindings are thin,
 independent wrappers over the core (no shared UI runtime such as Preact). Angular bindings avoid decorators so they build with tsup instead of ng-packagr.

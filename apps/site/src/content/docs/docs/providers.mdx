@@ -51,6 +51,21 @@ const unicep = new Unicep({
 
 Para aplicar as mesmas opções a todos de uma vez: `defaultProviders({ fetch: meuFetch })`.
 
+### Chave da AwesomeAPI
+
+A AwesomeAPI pode limitar ou recusar requisições sem chave, principalmente as que vêm de servidores
+em nuvem. Se isso acontecer, passe uma chave:
+
+```ts
+awesomeApi({ apiKey: process.env.AWESOMEAPI_KEY });
+
+// ou, com todos os providers embutidos
+defaultProviders({ apiKeys: { awesomeapi: process.env.AWESOMEAPI_KEY } });
+```
+
+A chave vai na query (`?token=`), então não gera preflight de CORS. Use só no servidor ou atrás de
+um proxy: no navegador ela ficaria visível para qualquer pessoa.
+
 <Aside type="note">
   No navegador, cada provider só envia o cabeçalho `Accept`, então não há preflight de CORS. Se
   usar um proxy seu, mantenha assim.

@@ -160,6 +160,15 @@ const unicep = new Unicep({
 
 All built-in services send CORS headers, so they work from the browser.
 
+AwesomeAPI may rate limit or reject anonymous requests, especially from cloud servers. It accepts
+an API key, sent as the `token` query parameter (no CORS preflight). Use it only on the server or
+behind a proxy, never in browser code:
+
+```ts
+awesomeApi({ apiKey: process.env.AWESOMEAPI_KEY });
+defaultProviders({ apiKeys: { awesomeapi: process.env.AWESOMEAPI_KEY } });
+```
+
 ### Disclaimer and responsible use
 
 `@unicep/core` does not provide, host or own any CEP data or API: it only queries the services

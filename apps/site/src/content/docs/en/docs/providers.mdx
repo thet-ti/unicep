@@ -51,6 +51,21 @@ const unicep = new Unicep({
 
 To apply the same options to all of them at once: `defaultProviders({ fetch: myFetch })`.
 
+### AwesomeAPI key
+
+AwesomeAPI may rate limit or reject requests without a key, especially from cloud servers. If that
+happens, pass a key:
+
+```ts
+awesomeApi({ apiKey: process.env.AWESOMEAPI_KEY });
+
+// or, with all the built-in providers
+defaultProviders({ apiKeys: { awesomeapi: process.env.AWESOMEAPI_KEY } });
+```
+
+The key goes in the query string (`?token=`), so it triggers no CORS preflight. Use it only on the
+server or behind a proxy: in the browser it would be visible to anyone.
+
 <Aside type="note">
   In the browser, each provider only sends the `Accept` header, so there is no CORS preflight. If
   you use your own proxy, keep it that way.
