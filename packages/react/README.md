@@ -3,6 +3,8 @@
 React hook for [`@unicep/core`](https://github.com/thet-ti/unicep/tree/main/packages/core):
 Brazilian CEP lookup with automatic provider fallback and circuit breakers.
 
+**Documentation:** [unicep.thet.dev](https://unicep.thet.dev) (Portuguese and English) · [provider status](https://unicep.thet.dev/status)
+
 Requires React 18 or newer.
 
 ## Install

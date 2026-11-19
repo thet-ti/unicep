@@ -4,6 +4,8 @@ Angular bindings (signals and RxJS) for
 [`@unicep/core`](https://github.com/thet-ti/unicep/tree/main/packages/core): Brazilian CEP lookup
 with automatic provider fallback and circuit breakers.
 
+**Documentation:** [unicep.thet.dev](https://unicep.thet.dev) (Portuguese and English) · [provider status](https://unicep.thet.dev/status)
+
 Requires Angular 17 or newer and RxJS 7. The package uses no decorators, so it works with the
 standard Angular build.
 

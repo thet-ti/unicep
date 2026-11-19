@@ -3,6 +3,8 @@
 Unified Brazilian postal code (CEP) lookup for browsers and Node.js, with automatic provider
 fallback powered by circuit breakers.
 
+**Documentation:** [unicep.thet.dev](https://unicep.thet.dev) (Portuguese and English) · [provider status](https://unicep.thet.dev/status)
+
 > **Status:** early development. The public API is not stable yet.
 
 ## Why

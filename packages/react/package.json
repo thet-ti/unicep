@@ -8,7 +8,7 @@
     "url": "git+https://github.com/thet-ti/unicep.git",
     "directory": "packages/react"
   },
-  "homepage": "https://github.com/thet-ti/unicep#readme",
+  "homepage": "https://unicep.thet.dev",
   "bugs": {
     "url": "https://github.com/thet-ti/unicep/issues"
   },

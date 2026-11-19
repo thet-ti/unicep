@@ -3,6 +3,8 @@
 Vue 3 composable for [`@unicep/core`](https://github.com/thet-ti/unicep/tree/main/packages/core):
 Brazilian CEP lookup with automatic provider fallback and circuit breakers.
 
+**Documentation:** [unicep.thet.dev](https://unicep.thet.dev) (Portuguese and English) · [provider status](https://unicep.thet.dev/status)
+
 Requires Vue 3.3 or newer.
 
 ## Install

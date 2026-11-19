@@ -4,6 +4,8 @@ Brazilian postal code (CEP) lookup for browsers and Node.js. It queries several 
 behind one interface, detects failing ones with circuit breakers and falls back to the next
 one, always returning the same normalized `Address`.
 
+**Documentation:** [unicep.thet.dev](https://unicep.thet.dev) (Portuguese and English) · [provider status](https://unicep.thet.dev/status)
+
 - Framework-agnostic, written in TypeScript, ESM and CJS.
 - Works in browsers and Node.js 20+ (uses the native `fetch`).
 - Built-in providers: ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI.
