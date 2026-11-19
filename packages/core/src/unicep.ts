@@ -35,6 +35,7 @@ const DEFAULT_CACHE_MAX_ENTRIES = 500;
 
 interface ProviderEntry {
   provider: CepProvider;
+  /** Replaced with a fresh (closed) breaker when a last resort attempt succeeds. */
   breaker: CircuitBreakerPolicy;
 }
 
@@ -44,6 +45,8 @@ interface ProviderEntry {
  */
 export class Unicep {
   readonly #entries: readonly ProviderEntry[];
+  readonly #createBreaker: () => CircuitBreakerPolicy;
+  readonly #lastResort: boolean;
   readonly #timeoutMs: number;
   readonly #retries: number;
   readonly #retryDelayMs: number;
@@ -78,16 +81,20 @@ export class Unicep {
     const failureThreshold = options.circuitBreaker?.failureThreshold ?? DEFAULT_FAILURE_THRESHOLD;
     const halfOpenAfter = options.circuitBreaker?.resetTimeoutMs ?? DEFAULT_RESET_TIMEOUT_MS;
 
-    this.#entries = options.providers.map((provider) => ({
-      provider,
-      // Only provider failures count; "not found" answers and cancellations do not.
-      breaker: circuitBreaker(
+    this.#lastResort = options.circuitBreaker?.lastResort ?? false;
+    // Only provider failures count; "not found" answers and cancellations do not.
+    this.#createBreaker = () =>
+      circuitBreaker(
         handleWhen((error) => error instanceof ProviderError),
         {
           halfOpenAfter,
           breaker: new ConsecutiveBreaker(failureThreshold),
         },
-      ),
+      );
+
+    this.#entries = options.providers.map((provider) => ({
+      provider,
+      breaker: this.#createBreaker(),
     }));
   }
 
@@ -102,34 +109,49 @@ export class Unicep {
     if (cached) return { ...cached };
 
     const failures: UnicepError[] = [];
-    let notFound = 0;
+    const skipped: { entry: ProviderEntry; slot: number }[] = [];
 
-    for (const { provider, breaker } of this.#entries) {
+    for (const entry of this.#entries) {
+      const { provider, breaker } = entry;
       try {
         const result = await breaker.execute(() => this.#query(provider, cep, userSignal));
-        const address: Address = { ...result, provider: provider.name };
-        this.#cache?.set(cep, address);
-        return { ...address };
+        return this.#succeed(cep, provider, result);
       } catch (error) {
         if (userSignal?.aborted) throw userSignal.reason;
-        if (error instanceof CepNotFoundError) {
-          notFound++;
-          failures.push(error);
-        } else if (error instanceof BrokenCircuitError) {
+        if (error instanceof BrokenCircuitError) {
+          skipped.push({ entry, slot: failures.length });
           failures.push(new CircuitOpenError(provider.name));
-        } else if (error instanceof ProviderError) {
-          failures.push(error);
         } else {
-          throw error;
+          failures.push(asLookupFailure(error));
+        }
+      }
+    }
+
+    // Last resort: try the providers whose circuit was open, bypassing their breakers.
+    if (this.#lastResort) {
+      for (const { entry, slot } of skipped) {
+        try {
+          const result = await this.#query(entry.provider, cep, userSignal);
+          entry.breaker = this.#createBreaker();
+          return this.#succeed(cep, entry.provider, result);
+        } catch (error) {
+          if (userSignal?.aborted) throw userSignal.reason;
+          failures[slot] = asLookupFailure(error);
         }
       }
     }
 
     const attempted = failures.filter((error) => !(error instanceof CircuitOpenError));
-    if (attempted.length > 0 && notFound === attempted.length) {
+    if (attempted.length > 0 && attempted.every((error) => error instanceof CepNotFoundError)) {
       throw new CepNotFoundError(cep);
     }
     throw new AllProvidersFailedError(cep, failures);
+  }
+
+  #succeed(cep: string, provider: CepProvider, result: ProviderAddress): Address {
+    const address: Address = { ...result, provider: provider.name };
+    this.#cache?.set(cep, address);
+    return { ...address };
   }
 
   /** Current circuit state of every provider, in priority order. */
@@ -178,6 +200,12 @@ export class Unicep {
       throw new ProviderError(provider.name, undefined, { cause: error });
     }
   }
+}
+
+/** Keeps "not found" and provider failures; anything else is a bug and is rethrown. */
+function asLookupFailure(error: unknown): UnicepError {
+  if (error instanceof CepNotFoundError || error instanceof ProviderError) return error;
+  throw error;
 }
 
 /** Resolves after `ms`, or rejects with the abort reason if the signal fires first. */
