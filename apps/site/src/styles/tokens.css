@@ -1,0 +1,21 @@
+/* .thet identity: black canvas, white type, neutral grays, magenta only on the brand marks. */
+:root {
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --surface-hover: #111111;
+  --border: #1f1f1f;
+  --border-hover: #333333;
+  --text: #fafafa;
+  --muted: #a1a1a1;
+  --accent: #e52a9a;
+  --accent-bright: #ff03f2;
+  --ok: #3ddc97;
+  --ok-bg: rgba(61, 220, 151, 0.1);
+  --warn: #f5b942;
+  --warn-bg: rgba(245, 185, 66, 0.1);
+  --down: #ff6b6b;
+  --down-bg: rgba(255, 107, 107, 0.1);
+  --radius: 12px;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}

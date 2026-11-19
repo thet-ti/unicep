@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import type { StatusSnapshot } from '../lib/status';
-import { htmlLang, type Locale, messages } from '../i18n/ui';
+import { htmlLang, type Locale, messages, routes } from '../i18n/ui';
 
 interface Props {
   locale: Locale;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { locale, status } = Astro.props;
-const t = messages[locale];
+const t = messages[locale].status;
 const { providers, checkedAt } = status;
 
 const onlineCount = providers.filter((p) => p.online).length;
@@ -27,7 +27,14 @@ const checkedAtLabel = `${new Intl.DateTimeFormat(htmlLang[locale], {
 }).format(new Date(checkedAt))} UTC`;
 ---
 
-<Layout locale={locale} title="unicep status" description={t.description} refreshSeconds={60}>
+<Layout
+  locale={locale}
+  title="unicep status"
+  description={t.description}
+  alternates={routes.status}
+  current="status"
+  refreshSeconds={60}
+>
   <section class="hero">
     <p class="eyebrow">{t.eyebrow}</p>
     <h1>{t.heading}</h1>

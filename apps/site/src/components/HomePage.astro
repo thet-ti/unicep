@@ -1,0 +1,188 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { type Locale, messages, routes } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = messages[locale].home;
+
+const example = `import { Unicep, defaultProviders } from '@unicep/core';
+
+const unicep = new Unicep({ providers: defaultProviders() });
+
+const address = await unicep.lookup('01310-100');
+// { cep: '01310100', street: 'Avenida Paulista', city: 'São Paulo',
+//   state: 'SP', provider: 'viacep', ... }`;
+---
+
+<Layout
+  locale={locale}
+  title="unicep"
+  description={t.description}
+  alternates={routes.home}
+  current="home"
+>
+  <section class="hero home-hero">
+    <p class="eyebrow">{t.eyebrow}</p>
+    <h1>{t.title}</h1>
+    <p class="lead">{t.subtitle}</p>
+    <div class="actions">
+      <a class="button primary" href={routes.docs[locale]}>{t.readDocs}</a>
+      <a class="button" href={routes.status[locale]}>{t.viewStatus}</a>
+    </div>
+  </section>
+
+  <section class="snippets">
+    <div class="snippet">
+      <p class="label">{t.install}</p>
+      <pre><code>npm install @unicep/core</code></pre>
+    </div>
+    <div class="snippet">
+      <p class="label">{t.example}</p>
+      <pre><code>{example}</code></pre>
+    </div>
+  </section>
+
+  <section class="features">
+    {
+      t.features.map((feature) => (
+        <article class="feature">
+          <h2>{feature.title}</h2>
+          <p>{feature.text}</p>
+        </article>
+      ))
+    }
+  </section>
+</Layout>
+
+<style is:global>
+  .home-hero {
+    margin-bottom: 40px;
+  }
+
+  .home-hero h1 {
+    max-width: 16ch;
+  }
+
+  .eyebrow {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    margin: 0 0 20px;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  .lead {
+    max-width: 60ch;
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+
+  .button:hover {
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+  }
+
+  .button.primary {
+    border-color: var(--text);
+    background: var(--text);
+    color: #000;
+  }
+
+  .button.primary:hover {
+    background: #e5e5e5;
+  }
+
+  .snippets {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .snippet {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .snippet .label {
+    margin: 0;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .snippet pre {
+    margin: 0;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .features {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .feature {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .feature h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .feature p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+</style>

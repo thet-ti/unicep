@@ -1,0 +1,31 @@
+---
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a class="brand" href={href} aria-label="unicep">
+  <span class="brand-dot" aria-hidden="true"></span><span class="brand-name">unicep</span>
+</a>
+
+<style is:global>
+  .brand {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Same size as the lowercase letters (1ex = x-height), sitting on the baseline. */
+  .brand-dot {
+    display: inline-block;
+    width: 1ex;
+    height: 1ex;
+    margin-right: 0.18em;
+    border-radius: 0.14ex;
+    background: linear-gradient(135deg, #ec13ca, var(--accent-bright));
+  }
+</style>
