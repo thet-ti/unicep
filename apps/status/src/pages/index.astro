@@ -1,4 +1,5 @@
 ---
+import Layout from '../layouts/Layout.astro';
 import { getStatus } from '../lib/status';
 
 const { providers, checkedAt } = await getStatus();
@@ -9,10 +10,7 @@ const summary =
     ? { tone: 'ok', text: 'All providers are operational' }
     : onlineCount === 0
       ? { tone: 'down', text: 'All providers are down' }
-      : {
-          tone: 'warn',
-          text: `${providers.length - onlineCount} of ${providers.length} providers are down`,
-        };
+      : { tone: 'warn', text: `${providers.length - onlineCount} of ${providers.length} providers are down` };
 
 const circuitLabel = { closed: 'Closed', open: 'Open', 'half-open': 'Half-open' } as const;
 const checkedAtLabel = new Date(checkedAt).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
@@ -21,142 +19,88 @@ const checkedAtLabel = new Date(checkedAt).toISOString().replace('T', ' ').slice
 Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="refresh" content="60" />
-    <meta name="description" content="Live status of the CEP providers used by unicep." />
-    <title>unicep status</title>
-  </head>
-  <body>
-    <main>
-      <header>
-        <h1>unicep status</h1>
-        <p class={`summary ${summary.tone}`}>
-          <span class="dot" aria-hidden="true"></span>
-          {summary.text}
-        </p>
-      </header>
+<Layout
+  title="unicep status"
+  description="Live status of the CEP providers used by unicep."
+  refreshSeconds={60}
+>
+  <section class="hero">
+    <p class="eyebrow">Status</p>
+    <h1>Provider status</h1>
+    <p class={`summary ${summary.tone}`}>
+      <span class="dot" aria-hidden="true"></span>
+      {summary.text}
+    </p>
+  </section>
 
-      <section class="grid" aria-label="Providers">
-        {
-          providers.map((provider) => (
-            <article class="card">
-              <div class="card-head">
-                <h2>
-                  <a href={provider.url} rel="noopener noreferrer">{provider.name}</a>
-                </h2>
-                <span class={`badge ${provider.online ? 'ok' : 'down'}`}>
-                  {provider.online ? 'Online' : 'Offline'}
-                </span>
-              </div>
-              <dl>
-                <div>
-                  <dt>Latency</dt>
-                  <dd>{provider.latencyMs === null ? '—' : `${provider.latencyMs} ms`}</dd>
-                </div>
-                <div>
-                  <dt>Circuit breaker</dt>
-                  <dd>
-                    <span class={`circuit ${provider.circuit}`}>{circuitLabel[provider.circuit]}</span>
-                  </dd>
-                </div>
-              </dl>
-            </article>
-          ))
-        }
-      </section>
+  <section class="grid" aria-label="Providers">
+    {
+      providers.map((provider) => (
+        <article class="card">
+          <div class="card-head">
+            <h2>
+              <a href={provider.url} rel="noopener noreferrer">{provider.name}</a>
+            </h2>
+            <span class={`badge ${provider.online ? 'ok' : 'down'}`}>
+              <span class="dot" aria-hidden="true" />
+              {provider.online ? 'Online' : 'Offline'}
+            </span>
+          </div>
+          <dl>
+            <div>
+              <dt>Latency</dt>
+              <dd class="mono">{provider.latencyMs === null ? '—' : `${provider.latencyMs} ms`}</dd>
+            </div>
+            <div>
+              <dt>Circuit breaker</dt>
+              <dd>
+                <span class={`circuit ${provider.circuit}`}>{circuitLabel[provider.circuit]}</span>
+              </dd>
+            </div>
+          </dl>
+        </article>
+      ))
+    }
+  </section>
 
-      <footer>
-        <p>
-          Last checked <time datetime={checkedAt}>{checkedAtLabel}</time>. Results are shared between
-          visitors and refreshed every minute.
-        </p>
-        <p>
-          <a href="https://github.com/thet-ti/unicep">unicep</a> · Brazilian CEP lookup with automatic
-          provider fallback.
-        </p>
-      </footer>
-    </main>
-  </body>
-</html>
+  <p class="checked">
+    Last checked <time datetime={checkedAt}>{checkedAtLabel}</time>. Results are shared between visitors
+    and refreshed every minute.
+  </p>
+</Layout>
 
 <style is:global>
-  :root {
-    --bg: #f6f7f9;
-    --surface: #ffffff;
-    --border: #e1e4e8;
-    --text: #1b1f24;
-    --muted: #5b6573;
-    --ok: #1a7f4b;
-    --ok-bg: #e3f5ec;
-    --warn: #9a6700;
-    --warn-bg: #fff4d6;
-    --down: #c4261d;
-    --down-bg: #fde8e6;
-    color-scheme: light dark;
+  .hero {
+    margin-bottom: 40px;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0f1216;
-      --surface: #171b21;
-      --border: #2a3039;
-      --text: #e8ebef;
-      --muted: #9aa4b2;
-      --ok: #4cc38a;
-      --ok-bg: #12301f;
-      --warn: #e3b341;
-      --warn-bg: #33290d;
-      --down: #ff7b72;
-      --down-bg: #3a1614;
-    }
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.5;
-  }
-
-  main {
-    max-width: 880px;
-    margin: 0 auto;
-    padding: 48px 16px;
-  }
-
-  h1 {
+  .eyebrow {
     margin: 0 0 12px;
-    font-size: 1.75rem;
+    color: var(--accent);
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
-  a {
-    color: inherit;
+  .hero h1 {
+    margin: 0 0 20px;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
   }
 
   .summary {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 0 32px;
-    padding: 8px 14px;
+    gap: 10px;
+    margin: 0;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
     border-radius: 999px;
-    font-weight: 600;
-  }
-
-  .summary .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: currentColor;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
 
   .summary.ok {
@@ -172,17 +116,33 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
     background: var(--down-bg);
   }
 
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
   .grid {
     display: grid;
     gap: 16px;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 
   .card {
     padding: 20px;
-    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+  }
+
+  .card:hover {
+    border-color: rgba(229, 42, 154, 0.5);
+    background: var(--surface-hover);
   }
 
   .card-head {
@@ -190,27 +150,32 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 
   .card h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   .card h2 a {
     text-decoration: none;
   }
   .card h2 a:hover {
-    text-decoration: underline;
+    color: var(--accent);
   }
 
   .badge,
   .circuit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 2px 10px;
     border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 500;
   }
 
   .badge.ok,
@@ -230,7 +195,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
 
   dl {
     display: grid;
-    gap: 10px;
+    gap: 12px;
     margin: 0;
   }
 
@@ -242,22 +207,22 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
 
   dt {
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 
   dd {
     margin: 0;
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    font-weight: 500;
   }
 
-  footer {
-    margin-top: 40px;
+  .mono {
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .checked {
+    margin: 32px 0 0;
     color: var(--muted);
     font-size: 0.85rem;
-  }
-
-  footer p {
-    margin: 4px 0;
   }
 </style>
