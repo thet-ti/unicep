@@ -1,15 +1,18 @@
 ---
 import '@fontsource-variable/inter';
 import corePackage from '@unicep/core/package.json';
+import { htmlLang, languageNames, type Locale, locales, messages, paths } from '../i18n/ui';
 
 interface Props {
+  locale: Locale;
   title: string;
   description: string;
   /** Seconds between automatic reloads; omit to disable. */
   refreshSeconds?: number;
 }
 
-const { title, description, refreshSeconds } = Astro.props;
+const { locale, title, description, refreshSeconds } = Astro.props;
+const t = messages[locale];
 
 // The status page runs the exact @unicep/core version from this repository.
 const version: string = corePackage.version;
@@ -18,7 +21,7 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang[locale]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -32,26 +35,36 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
   <body>
     <header class="site-header">
       <div class="container bar">
-        <a class="brand" href="/" aria-label="unicep status">
-          <span class="brand-dot" aria-hidden="true"></span>
-          <span class="brand-name">unicep</span>
+        <a class="brand" href={paths[locale]} aria-label="unicep status">
+          <span class="brand-dot" aria-hidden="true"></span><span class="brand-name">unicep</span>
         </a>
 
         <nav class="links" aria-label="Project links">
-          <a class="icon-link" href={repositoryUrl} rel="noopener noreferrer" aria-label="unicep on GitHub">
+          <div class="lang" role="group" aria-label={t.language}>
+            {
+              locales.map((code) => (
+                <a
+                  href={paths[code]}
+                  hreflang={htmlLang[code]}
+                  lang={htmlLang[code]}
+                  aria-label={languageNames[code].full}
+                  aria-current={code === locale ? 'true' : undefined}
+                >
+                  {languageNames[code].short}
+                </a>
+              ))
+            }
+          </div>
+
+          <a class="icon-link" href={repositoryUrl} rel="noopener noreferrer" aria-label={t.github}>
             <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true">
               <path
                 d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
               ></path>
             </svg>
           </a>
-          <a
-            class="icon-link npm"
-            href={npmUrl}
-            rel="noopener noreferrer"
-            aria-label={`@unicep/core ${version} on npm`}
-          >
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+          <a class="icon-link" href={npmUrl} rel="noopener noreferrer" aria-label={t.npm(version)}>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
               <path
                 d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456L12.04 19.17H5.113z"
               ></path>
@@ -69,9 +82,9 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
     <footer class="site-footer">
       <div class="container foot">
         <img src="/thet-logo.png" alt=".thet" width="214" height="82" />
-        <p>Brazilian CEP lookup with automatic provider fallback.</p>
+        <p class="motd">{t.motd}</p>
         <p class="legal">
-          <a href={repositoryUrl} rel="noopener noreferrer">Open source</a> under the MIT license.
+          <a href={repositoryUrl} rel="noopener noreferrer">{t.openSource}</a>{' '}{t.license}
         </p>
       </div>
     </footer>
@@ -80,7 +93,7 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
 
 <style is:global>
   :root {
-    /* .thet identity: black canvas, white type, magenta accent. */
+    /* .thet identity: black canvas, white type, magenta only on the brand marks. */
     --bg: #000000;
     --surface: #0a0a0a;
     --surface-hover: #111111;
@@ -175,14 +188,50 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
   .links {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .lang {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    margin-right: 8px;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .lang a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 10px;
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      background 0.15s;
+  }
+
+  .lang a:hover {
+    color: var(--text);
+  }
+
+  .lang a[aria-current='true'] {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .icon-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    height: 36px;
+    padding: 0 8px;
     border-radius: 8px;
     color: var(--muted);
     text-decoration: none;
@@ -191,26 +240,29 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
       background 0.15s;
   }
 
+  .icon-link svg {
+    display: block;
+    flex: none;
+  }
+
   .icon-link:hover,
+  .lang a:focus-visible,
   .icon-link:focus-visible {
     color: var(--text);
     background: rgba(255, 255, 255, 0.06);
   }
 
+  .lang a:focus-visible,
   .icon-link:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-  }
-
-  .icon-link.npm {
-    padding-right: 12px;
   }
 
   .version {
     font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
     font-size: 0.8rem;
     font-weight: 500;
-    color: var(--muted);
+    line-height: 1;
   }
 
   .site-footer {
@@ -237,6 +289,10 @@ const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
     display: block;
     width: auto;
     height: 24px;
+  }
+
+  .motd {
+    color: var(--text);
   }
 
   .foot a {

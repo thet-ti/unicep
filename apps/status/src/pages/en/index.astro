@@ -1,0 +1,11 @@
+---
+import StatusPage from '../../components/StatusPage.astro';
+import { getStatus } from '../../lib/status';
+
+const status = await getStatus();
+
+// Shared between visitors; the server also caches the snapshot for 60 seconds.
+Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
+---
+
+<StatusPage locale="en" status={status} />
