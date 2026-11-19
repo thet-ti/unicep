@@ -1,0 +1,54 @@
+/* Maps Starlight's design tokens to the .thet identity: pure black, neutral grays. */
+:root,
+:root[data-theme="dark"] {
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #ededed;
+  --sl-color-gray-2: #c8c8c8;
+  --sl-color-gray-3: #9a9a9a;
+  --sl-color-gray-4: #6a6a6a;
+  --sl-color-gray-5: #2a2a2a;
+  --sl-color-gray-6: #141414;
+  --sl-color-gray-7: #0a0a0a;
+  --sl-color-black: #000000;
+
+  --sl-color-accent-low: #1a1a1a;
+  --sl-color-accent: #d4d4d4;
+  --sl-color-accent-high: #ffffff;
+
+  --sl-color-bg: #000000;
+  --sl-color-bg-nav: #000000;
+  --sl-color-bg-sidebar: #000000;
+  --sl-color-bg-inline-code: #111111;
+  --sl-color-hairline-light: #1f1f1f;
+  --sl-color-hairline: #1f1f1f;
+  --sl-color-hairline-shade: #1f1f1f;
+
+  --sl-color-text: #c8c8c8;
+  --sl-color-text-accent: #ffffff;
+  --sl-color-text-invert: #000000;
+
+  --sl-font: "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --sl-font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --sl-content-width: 46rem;
+}
+
+header.header {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Sidebar: highlight the current page with a neutral pill instead of a colored one. */
+.sidebar-content a[aria-current="page"] {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+/* Callouts, cards and tabs stay neutral. */
+.starlight-aside,
+.card {
+  border-radius: 12px;
+}
+
+.sl-markdown-content :not(pre) > code {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}

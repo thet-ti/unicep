@@ -1,0 +1,9 @@
+---
+import Brand from '../components/Brand.astro';
+import { routes } from '../i18n/ui';
+import { localeFromLang } from '../lib/locale';
+
+const locale = localeFromLang(Astro.locals.starlightRoute.lang);
+---
+
+<Brand href={routes.home[locale]} />

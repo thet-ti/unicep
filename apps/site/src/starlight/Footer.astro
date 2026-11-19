@@ -1,0 +1,10 @@
+---
+import DefaultFooter from '@astrojs/starlight/components/Footer.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { localeFromLang } from '../lib/locale';
+
+const locale = localeFromLang(Astro.locals.starlightRoute.lang);
+---
+
+<DefaultFooter><slot /></DefaultFooter>
+<SiteFooter locale={locale} />
