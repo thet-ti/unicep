@@ -10,11 +10,7 @@ unicep has two pieces:
 - **`Unicep`**: takes a list of providers, puts a circuit breaker on each one and tries them one
   by one until somebody answers.
 
-```
- your app ──▶ Unicep ──▶ ViaCEP ──▶ BrasilAPI ──▶ OpenCEP ──▶ AwesomeAPI
-                │         (each provider has its own circuit breaker)
-                └── always returns the same Address object
-```
+![Your app calls Unicep, which tries Provider 1, then Provider 2 and so on, each with its own circuit breaker, and always returns the same Address object.](/diagrams/flow-en.svg)
 
 ## The path of a lookup
 
