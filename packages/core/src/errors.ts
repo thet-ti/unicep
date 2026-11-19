@@ -42,6 +42,29 @@ export class CircuitOpenError extends ProviderError {
   }
 }
 
+/** The value is not a Brazilian state abbreviation (UF). */
+export class InvalidStateError extends UnicepError {
+  readonly input: string;
+
+  constructor(input: string) {
+    super(`Invalid state (UF): "${input}"`);
+    this.input = input;
+  }
+}
+
+/** No provider could list the states or the cities. */
+export class AllLocalityProvidersFailedError extends UnicepError {
+  readonly resource: 'states' | 'cities';
+  /** One error per provider, in the order they were tried. */
+  readonly errors: readonly UnicepError[];
+
+  constructor(resource: 'states' | 'cities', errors: readonly UnicepError[]) {
+    super(`All providers failed to list the ${resource}`, { cause: errors });
+    this.resource = resource;
+    this.errors = errors;
+  }
+}
+
 /** No provider could answer the lookup. */
 export class AllProvidersFailedError extends UnicepError {
   readonly cep: string;
