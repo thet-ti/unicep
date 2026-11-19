@@ -85,6 +85,23 @@ const unicep = new Unicep({
 });
 ```
 
+## States and cities
+
+`states()` and `cities(uf)` list the Brazilian states and the cities of a state, with the same
+fallback and circuit breakers as CEP lookups. Results are sorted by name and cached for 24 hours.
+
+```ts
+const states = await unicep.states(); // [{ id: 12, uf: 'AC', name: 'Acre' }, ...]
+const cities = await unicep.cities('SP'); // [{ name: 'Adamantina', ibgeCode: '3500105' }, ...]
+```
+
+The default providers are BrasilAPI and IBGE, in this order. BrasilAPI shares its circuit with
+the CEP provider of the same name. Use `localities.providers` to change them (see
+`LocalityProvider`), `localities.cache` to tune the cache (or `false` to turn it off), and
+`localitiesStatus()` to read their circuits. `ufs`, `isValidUf()` and `normalizeUf()` are also
+exported. An unknown UF throws `InvalidStateError`, and when every provider fails the error is
+`AllLocalityProvidersFailedError`.
+
 ## Retry
 
 By default a failing provider is skipped right away and the next one is tried. To also retry the
@@ -128,13 +145,15 @@ instance, so create it once and reuse it.
 
 All errors extend `UnicepError`.
 
-| Error                     | When                                                                 |
-| ------------------------- | -------------------------------------------------------------------- |
-| `InvalidCepError`         | The input is not a valid CEP. No request is made.                    |
-| `CepNotFoundError`        | The CEP is well formed but no provider knows it.                     |
-| `AllProvidersFailedError` | No provider could answer. `error.errors` has one entry per provider. |
-| `ProviderError`           | Thrown by a provider on failure (`error.provider`, `error.cause`).   |
-| `CircuitOpenError`        | A provider was skipped because its circuit is open.                  |
+| Error                             | When                                                                 |
+| --------------------------------- | -------------------------------------------------------------------- |
+| `InvalidCepError`                 | The input is not a valid CEP. No request is made.                    |
+| `CepNotFoundError`                | The CEP is well formed but no provider knows it.                     |
+| `InvalidStateError`               | The UF passed to `cities()` is not one of the 27.                    |
+| `AllLocalityProvidersFailedError` | No provider could list states or cities.                             |
+| `AllProvidersFailedError`         | No provider could answer. `error.errors` has one entry per provider. |
+| `ProviderError`                   | Thrown by a provider on failure (`error.provider`, `error.cause`).   |
+| `CircuitOpenError`                | A provider was skipped because its circuit is open.                  |
 
 ```ts
 import { AllProvidersFailedError, CepNotFoundError, InvalidCepError } from '@unicep/core';
