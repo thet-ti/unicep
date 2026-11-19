@@ -8,14 +8,15 @@ import { Aside } from '@astrojs/starlight/components';
 Um **provider** é o adaptador de um serviço de CEP. A unicep traz quatro, todos funcionam direto
 no navegador (os serviços liberam CORS) e devolvem o mesmo `Address`.
 
-| Função | Serviço | Traz `complement` | Traz `ibgeCode` |
-| --- | --- | --- | --- |
-| `viaCep()` | [ViaCEP](https://viacep.com.br) | sim | sim |
-| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | não | sim |
-| `openCep()` | [OpenCEP](https://opencep.com) | sim | sim |
-| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | não | sim |
+| Função | Serviço | Chave de API | Traz `complement` | Traz `ibgeCode` |
+| --- | --- | --- | --- | --- |
+| `viaCep()` | [ViaCEP](https://viacep.com.br) | não | sim | sim |
+| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | não | não | sim |
+| `openCep()` | [OpenCEP](https://opencep.com) | não | sim | sim |
+| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **sim** | não | sim |
 
-O `defaultProviders()` devolve os quatro, nessa ordem.
+O `defaultProviders()` devolve ViaCEP, BrasilAPI e OpenCEP, nessa ordem. A AwesomeAPI fica de fora
+porque precisa de chave de API: veja [Chave da AwesomeAPI](#chave-da-awesomeapi).
 
 ## Escolhendo e ordenando
 
@@ -53,13 +54,15 @@ Para aplicar as mesmas opções a todos de uma vez: `defaultProviders({ fetch: m
 
 ### Chave da AwesomeAPI
 
-A AwesomeAPI pode limitar ou recusar requisições sem chave, principalmente as que vêm de servidores
-em nuvem. Se isso acontecer, passe uma chave:
+A AwesomeAPI precisa de uma chave de API: sem ela, o serviço pode limitar ou recusar as
+requisições, principalmente as que vêm de servidores em nuvem. Por isso ela não está no
+`defaultProviders()`. Para usá-la, passe a chave:
 
 ```ts
+// no provider
 awesomeApi({ apiKey: process.env.AWESOMEAPI_KEY });
 
-// ou, com todos os providers embutidos
+// ou em defaultProviders, que então inclui a AwesomeAPI no fim da lista
 defaultProviders({ apiKeys: { awesomeapi: process.env.AWESOMEAPI_KEY } });
 ```
 

@@ -8,7 +8,7 @@ one, always returning the same normalized `Address`.
 
 - Framework-agnostic, written in TypeScript, ESM and CJS.
 - Works in browsers and Node.js 20+ (uses the native `fetch`).
-- Built-in providers: ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI.
+- Built-in providers: ViaCEP, BrasilAPI and OpenCEP, plus AwesomeAPI (needs an API key).
 - Add your own provider by implementing a small interface.
 
 Framework bindings: [`@unicep/react`](https://github.com/thet-ti/unicep/tree/main/packages/react),
@@ -140,14 +140,15 @@ try {
 
 ## Providers
 
-| Function       | Service                                              |
-| -------------- | ---------------------------------------------------- |
-| `viaCep()`     | [ViaCEP](https://viacep.com.br)                      |
-| `brasilApi()`  | [BrasilAPI](https://brasilapi.com.br) (CEP v2)       |
-| `openCep()`    | [OpenCEP](https://opencep.com)                       |
-| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) |
+| Function       | Service                                              | API key      |
+| -------------- | ---------------------------------------------------- | ------------ |
+| `viaCep()`     | [ViaCEP](https://viacep.com.br)                      | no           |
+| `brasilApi()`  | [BrasilAPI](https://brasilapi.com.br) (CEP v2)       | no           |
+| `openCep()`    | [OpenCEP](https://opencep.com)                       | no           |
+| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **required** |
 
-`defaultProviders()` returns all of them in that order. Every provider accepts
+`defaultProviders()` returns ViaCEP, BrasilAPI and OpenCEP, in that order. AwesomeAPI is left out
+because it needs an API key (see below). Every provider accepts
 `{ fetch?, baseUrl? }`, to plug in your own `fetch` or point to a proxy or self-hosted instance:
 
 ```ts
@@ -160,12 +161,14 @@ const unicep = new Unicep({
 
 All built-in services send CORS headers, so they work from the browser.
 
-AwesomeAPI may rate limit or reject anonymous requests, especially from cloud servers. It accepts
-an API key, sent as the `token` query parameter (no CORS preflight). Use it only on the server or
-behind a proxy, never in browser code:
+AwesomeAPI needs an API key: without one it may rate limit or reject requests, especially from
+cloud servers. The key is sent as the `token` query parameter (no CORS preflight). Use it only on
+the server or behind a proxy, never in browser code:
 
 ```ts
 awesomeApi({ apiKey: process.env.AWESOMEAPI_KEY });
+
+// defaultProviders() adds AwesomeAPI at the end only when you pass its key
 defaultProviders({ apiKeys: { awesomeapi: process.env.AWESOMEAPI_KEY } });
 ```
 

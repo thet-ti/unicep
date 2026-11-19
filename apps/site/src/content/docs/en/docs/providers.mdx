@@ -8,14 +8,15 @@ import { Aside } from '@astrojs/starlight/components';
 A **provider** is the adapter for one CEP service. unicep ships four, all of them work straight
 from the browser (the services allow CORS) and return the same `Address`.
 
-| Function | Service | Has `complement` | Has `ibgeCode` |
-| --- | --- | --- | --- |
-| `viaCep()` | [ViaCEP](https://viacep.com.br) | yes | yes |
-| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | no | yes |
-| `openCep()` | [OpenCEP](https://opencep.com) | yes | yes |
-| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | no | yes |
+| Function | Service | API key | Has `complement` | Has `ibgeCode` |
+| --- | --- | --- | --- | --- |
+| `viaCep()` | [ViaCEP](https://viacep.com.br) | no | yes | yes |
+| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | no | no | yes |
+| `openCep()` | [OpenCEP](https://opencep.com) | no | yes | yes |
+| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **yes** | no | yes |
 
-`defaultProviders()` returns all four, in that order.
+`defaultProviders()` returns ViaCEP, BrasilAPI and OpenCEP, in that order. AwesomeAPI is left out
+because it needs an API key: see [AwesomeAPI key](#awesomeapi-key).
 
 ## Choosing and ordering
 
@@ -53,13 +54,15 @@ To apply the same options to all of them at once: `defaultProviders({ fetch: myF
 
 ### AwesomeAPI key
 
-AwesomeAPI may rate limit or reject requests without a key, especially from cloud servers. If that
-happens, pass a key:
+AwesomeAPI needs an API key: without one, the service may rate limit or reject requests,
+especially from cloud servers. That is why it is not in `defaultProviders()`. To use it, pass the
+key:
 
 ```ts
+// on the provider
 awesomeApi({ apiKey: process.env.AWESOMEAPI_KEY });
 
-// or, with all the built-in providers
+// or in defaultProviders, which then adds AwesomeAPI at the end of the list
 defaultProviders({ apiKeys: { awesomeapi: process.env.AWESOMEAPI_KEY } });
 ```
 

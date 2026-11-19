@@ -60,7 +60,8 @@ independent public services, each with its own terms, limits and availability:
 - [ViaCEP](https://viacep.com.br)
 - [BrasilAPI](https://brasilapi.com.br)
 - [OpenCEP](https://opencep.com)
-- [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep)
+- [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) (needs an API key, so it is not in the
+  default provider list)
 
 unicep is an independent open-source project and is not affiliated with, endorsed by or
 sponsored by any of them. Their names belong to their respective owners. The software is

@@ -80,7 +80,11 @@ need Node >= 20), and deploys to Render (`render.yaml`, Node adapter).
 - **Environment:** `SITE_URL` (public address, defaults to Render's `RENDER_EXTERNAL_URL`, then
   localhost) feeds `llms.txt` and the sitemap. `AWESOMEAPI_KEY` (secret, set in the Render
   dashboard) is sent to AwesomeAPI by the status page, because that service rejects anonymous
-  requests from Render's network. It is only ever used server side.
+  requests from Render's network. It is only ever used server side. Without it the status page
+  still lists AwesomeAPI, tagged "API key required" and not probed.
+- **Default providers:** `defaultProviders()` is ViaCEP, BrasilAPI and OpenCEP. AwesomeAPI needs an
+  API key, so it is opt-in (`awesomeApi({ apiKey })` or `defaultProviders({ apiKeys })`), and every
+  place that lists it (docs, READMEs, status page) must say that it needs a key.
 
 There is no server package: `@unicep/core` is already usable on the backend. Bindings are thin,
 independent wrappers over the core (no shared UI runtime such as Preact). Angular bindings avoid decorators so they build with tsup instead of ng-packagr.
