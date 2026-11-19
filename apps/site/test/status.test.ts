@@ -43,12 +43,29 @@ describe('status service', () => {
     const { providers, checkedAt } = await getStatus();
 
     expect(providers.map((p) => p.id)).toEqual(['viacep', 'brasilapi', 'opencep', 'awesomeapi']);
-    for (const provider of providers) {
+    for (const provider of providers.filter((p) => p.checked)) {
       expect(provider.online).toBe(true);
       expect(provider.latencyMs).toBeGreaterThanOrEqual(0);
       expect(provider.circuit).toBe('closed');
     }
     expect(new Date(checkedAt).toISOString()).toBe(checkedAt);
+  });
+
+  it('lists AwesomeAPI as requiring a key and does not probe it without one', async () => {
+    const fetch = fakeFetch();
+    const { getStatus } = createStatusService({ fetch });
+    const { providers } = await getStatus();
+
+    const awesome = providers.find((p) => p.id === 'awesomeapi');
+    expect(awesome).toMatchObject({ requiresKey: true, checked: false, online: false });
+    expect(providers.filter((p) => p.requiresKey).map((p) => p.id)).toEqual(['awesomeapi']);
+    expect(fetch.mock.calls.some((call) => String(call[0]).includes('awesomeapi'))).toBe(false);
+  });
+
+  it('probes AwesomeAPI once a key is configured', async () => {
+    const { getStatus } = createStatusService({ fetch: fakeFetch(), awesomeApiKey: 'k' });
+    const awesome = (await getStatus()).providers.find((p) => p.id === 'awesomeapi');
+    expect(awesome).toMatchObject({ requiresKey: true, checked: true, online: true });
   });
 
   it('sends the AwesomeAPI key only to AwesomeAPI', async () => {
@@ -67,7 +84,7 @@ describe('status service', () => {
     const { providers } = await getStatus();
     const brasil = providers.find((p) => p.id === 'brasilapi');
     expect(brasil).toMatchObject({ online: false, latencyMs: null });
-    expect(providers.filter((p) => p.online)).toHaveLength(3);
+    expect(providers.filter((p) => p.online)).toHaveLength(2);
   });
 
   it('opens the circuit after repeated failures', async () => {
@@ -109,6 +126,6 @@ describe('status service', () => {
     const [a, b, c] = await Promise.all([getStatus(), getStatus(), getStatus()]);
     expect(a).toBe(b);
     expect(b).toBe(c);
-    expect(fetch).toHaveBeenCalledTimes(4);
+    expect(fetch).toHaveBeenCalledTimes(3);
   });
 });

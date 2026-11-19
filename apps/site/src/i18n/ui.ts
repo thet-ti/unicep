@@ -60,6 +60,10 @@ export interface Messages {
     circuit: { closed: string; open: string; 'half-open': string };
     lastChecked: string;
     openInNewTab: string;
+    /** Tag shown on providers that need an API key. */
+    keyRequired: string;
+    /** Badge for a provider that was not checked because no key is configured. */
+    notChecked: string;
   };
 }
 
@@ -72,11 +76,11 @@ export const messages: Record<Locale, Messages> = {
     motd: 'A Única Forma de Procurar um CEP.',
     home: {
       description:
-        'Consulta de CEP para navegador e Node.js com fallback automático entre ViaCEP, BrasilAPI, OpenCEP e AwesomeAPI.',
+        'Consulta de CEP para navegador e Node.js com fallback automático entre ViaCEP, BrasilAPI e OpenCEP.',
       eyebrow: 'Biblioteca de CEP',
       title: 'Consulta de CEP com fallback automático.',
       subtitle:
-        'Uma única API para ViaCEP, BrasilAPI, OpenCEP e AwesomeAPI. Quando um serviço cai, a unicep troca para o próximo sozinha e sempre devolve o mesmo objeto.',
+        'Uma única API para ViaCEP, BrasilAPI e OpenCEP. Quando um serviço cai, a unicep troca para o próximo sozinha e sempre devolve o mesmo objeto.',
       readDocs: 'Ler a documentação',
       viewStatus: 'Ver status dos provedores',
       install: 'Instalação',
@@ -114,6 +118,8 @@ export const messages: Record<Locale, Messages> = {
       circuit: { closed: 'Fechado', open: 'Aberto', 'half-open': 'Meio-aberto' },
       lastChecked: 'Última verificação',
       openInNewTab: 'abre em uma nova aba',
+      keyRequired: 'Requer chave de API',
+      notChecked: 'Sem chave',
     },
   },
   en: {
@@ -124,11 +130,11 @@ export const messages: Record<Locale, Messages> = {
     motd: 'The Only Way to Look Up a CEP.',
     home: {
       description:
-        'CEP lookup for browsers and Node.js with automatic fallback between ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI.',
+        'CEP lookup for browsers and Node.js with automatic fallback between ViaCEP, BrasilAPI and OpenCEP.',
       eyebrow: 'CEP library',
       title: 'CEP lookup with automatic fallback.',
       subtitle:
-        'One API for ViaCEP, BrasilAPI, OpenCEP and AwesomeAPI. When a service goes down, unicep switches to the next one on its own and always returns the same object.',
+        'One API for ViaCEP, BrasilAPI and OpenCEP. When a service goes down, unicep switches to the next one on its own and always returns the same object.',
       readDocs: 'Read the docs',
       viewStatus: 'View provider status',
       install: 'Install',
@@ -166,6 +172,8 @@ export const messages: Record<Locale, Messages> = {
       circuit: { closed: 'Closed', open: 'Open', 'half-open': 'Half-open' },
       lastChecked: 'Last checked',
       openInNewTab: 'opens in a new tab',
+      keyRequired: 'API key required',
+      notChecked: 'No key',
     },
   },
 };

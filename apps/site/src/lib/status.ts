@@ -16,8 +16,12 @@ export interface ProviderStatus {
   id: string;
   name: string;
   url: string;
+  /** The provider needs an API key to work (AwesomeAPI). */
+  requiresKey: boolean;
+  /** `false` when the provider was not probed because its API key is not configured. */
+  checked: boolean;
   online: boolean;
-  /** Response time of the probe in milliseconds, `null` when the provider is offline. */
+  /** Response time of the probe in milliseconds, `null` when offline or not checked. */
   latencyMs: number | null;
   circuit: CircuitStatus;
 }
@@ -44,6 +48,7 @@ interface Target {
   name: string;
   url: string;
   provider: CepProvider;
+  requiresKey: boolean;
 }
 
 /**
@@ -55,19 +60,35 @@ export function createStatusService(options: StatusServiceOptions = {}) {
   const { cacheMs = 60_000, timeoutMs = 5_000, now = Date.now, awesomeApiKey, ...http } = options;
 
   const targets: Target[] = [
-    { id: 'viacep', name: 'ViaCEP', url: 'https://viacep.com.br', provider: viaCep(http) },
+    {
+      id: 'viacep',
+      name: 'ViaCEP',
+      url: 'https://viacep.com.br',
+      provider: viaCep(http),
+      requiresKey: false,
+    },
     {
       id: 'brasilapi',
       name: 'BrasilAPI',
       url: 'https://brasilapi.com.br',
       provider: brasilApi(http),
+      requiresKey: false,
     },
-    { id: 'opencep', name: 'OpenCEP', url: 'https://opencep.com', provider: openCep(http) },
+    {
+      id: 'opencep',
+      name: 'OpenCEP',
+      url: 'https://opencep.com',
+      provider: openCep(http),
+      requiresKey: false,
+    },
+    // Not one of the default providers: it needs an API key, so it is only probed when one is
+    // configured; otherwise the page shows it as "API key required".
     {
       id: 'awesomeapi',
       name: 'AwesomeAPI',
       url: 'https://docs.awesomeapi.com.br/api-cep',
       provider: awesomeApi({ ...http, apiKey: awesomeApiKey }),
+      requiresKey: true,
     },
   ];
 
@@ -81,6 +102,19 @@ export function createStatusService(options: StatusServiceOptions = {}) {
   }));
 
   async function check({ target, unicep }: (typeof probes)[number]): Promise<ProviderStatus> {
+    if (target.requiresKey && !awesomeApiKey) {
+      return {
+        id: target.id,
+        name: target.name,
+        url: target.url,
+        requiresKey: true,
+        checked: false,
+        online: false,
+        latencyMs: null,
+        circuit: 'closed',
+      };
+    }
+
     const start = performance.now();
     let online = true;
     try {
@@ -94,6 +128,8 @@ export function createStatusService(options: StatusServiceOptions = {}) {
       id: target.id,
       name: target.name,
       url: target.url,
+      requiresKey: target.requiresKey,
+      checked: true,
       online,
       latencyMs,
       circuit: unicep.status()[0]?.circuit ?? 'closed',
