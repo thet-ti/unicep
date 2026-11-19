@@ -53,6 +53,23 @@ interface Address {
 }
 ```
 
+## Open circuits as a last resort
+
+By default a provider with an open circuit is skipped right away, so a lookup can fail for up to
+`resetTimeoutMs` even though the service is already back. If you would rather never block the
+user, turn on `lastResort`:
+
+```ts
+const unicep = new Unicep({
+  providers: defaultProviders(),
+  circuitBreaker: { failureThreshold: 2, resetTimeoutMs: 60_000, lastResort: true },
+});
+```
+
+With it, when a lookup did not succeed, unicep still tries the providers that were skipped (in
+priority order), bypassing their circuit breaker. If one of them answers, its circuit closes. If
+they all fail, the error carries the real reason of each one, not "circuit open".
+
 ## Retry
 
 By default a failing provider is skipped right away. To retry the same provider before moving on
