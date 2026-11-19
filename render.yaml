@@ -1,0 +1,14 @@
+# Render Blueprint for the status page (apps/status).
+services:
+  - type: web
+    name: unicep-status
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter "@unicep/status..." build
+    startCommand: node apps/status/dist/server/entry.mjs
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: HOST
+        value: 0.0.0.0
