@@ -50,6 +50,31 @@ readonly cep = injectCep(() => this.value());
 All bindings use a shared default instance with the built-in providers. Pass `unicep` (or use
 `provideUnicep` in Angular) to customize providers, timeout or circuit breaker.
 
+## Providers and responsible use
+
+unicep does not provide, host or own any CEP data or API. It is a client that queries these
+independent public services, each with its own terms, limits and availability:
+
+- [ViaCEP](https://viacep.com.br)
+- [BrasilAPI](https://brasilapi.com.br)
+- [OpenCEP](https://opencep.com)
+- [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep)
+
+unicep is an independent open-source project and is not affiliated with, endorsed by or
+sponsored by any of them. Their names belong to their respective owners. The software is
+provided "as is" under the MIT license, with no warranty, and the availability and accuracy of
+the data are the responsibility of each service (which is exactly why unicep falls back between
+them).
+
+Please use these free services responsibly:
+
+- Enable the [in-memory cache](packages/core#cache) so the same CEP is not requested repeatedly.
+- Do not use unicep to crawl or validate entire databases; some services warn that heavy
+  automated use may get you blocked. For bulk needs, use a downloadable database (OpenCEP
+  publishes one) or host your own.
+- Read and respect each service's terms. For commercial or business-critical use, consider
+  contacting the maintainers or running your own instance (see the `baseUrl` option).
+
 ## Status page
 
 [`apps/status`](apps/status) is an Astro (SSR) page that shows, for each built-in provider,
