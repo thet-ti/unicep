@@ -85,7 +85,7 @@ const checkedAtLabel = `${new Intl.DateTimeFormat(htmlLang[locale], {
                     {t.circuit[provider.circuit]}
                   </span>
                 ) : (
-                  '—'
+                  <span class="mono">—</span>
                 )}
               </dd>
             </div>
@@ -275,8 +275,16 @@ const checkedAtLabel = `${new Intl.DateTimeFormat(htmlLang[locale], {
   .card-title {
     display: flex;
     flex-wrap: wrap;
+    flex: 1 1 auto;
     align-items: center;
     gap: 6px 10px;
+    min-width: 0;
+  }
+
+  /* The status badge never shrinks or breaks onto two lines; the title wraps instead. */
+  .card-head .badge {
+    flex: none;
+    white-space: nowrap;
   }
 
   /* Marks a provider that needs an API key. */
