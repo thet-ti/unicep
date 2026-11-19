@@ -1,5 +1,13 @@
 # @unicep/react
 
+## 0.1.1
+
+### Patch Changes
+
+- 668db2e: Link the documentation site (unicep.thet.dev) from the package pages.
+- Updated dependencies [668db2e]
+  - @unicep/core@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
