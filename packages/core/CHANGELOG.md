@@ -1,5 +1,11 @@
 # @unicep/core
 
+## 0.2.0
+
+### Minor Changes
+
+- 2b5530c: AwesomeAPI now needs an API key: it is no longer part of `defaultProviders()`. Pass `awesomeApi({ apiKey })`, or `defaultProviders({ apiKeys: { awesomeapi } })` to append it. The key is sent as the `token` query parameter.
+
 ## 0.1.1
 
 ### Patch Changes

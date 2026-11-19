@@ -1,6 +1,6 @@
 {
   "name": "@unicep/core",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Brazilian CEP lookup with automatic provider fallback and circuit breakers",
   "license": "MIT",
   "repository": {
