@@ -1,13 +1,13 @@
-name: Deploy status page
+name: Deploy site
 
-# Builds and tests the status page (apps/status) and then asks Render to deploy this commit.
+# Builds and tests the site (apps/site: docs and status page) and then asks Render to deploy this commit.
 # Requires the RENDER_DEPLOY_HOOK_URL secret (Render service > Settings > Deploy Hook) and the
 # service must have auto-deploy turned off (render.yaml already does this).
 on:
   push:
     branches: [main]
     paths:
-      - apps/status/**
+      - apps/site/**
       - packages/core/**
       - render.yaml
       - package.json
@@ -15,14 +15,14 @@ on:
       - pnpm-workspace.yaml
       - turbo.json
       - tsconfig.base.json
-      - .github/workflows/deploy-status.yml
+      - .github/workflows/deploy-site.yml
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-status
+  group: deploy-site
   cancel-in-progress: false
 
 jobs:
@@ -37,9 +37,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter "@unicep/status..." build
-      - run: pnpm --filter "@unicep/status" typecheck
-      - run: pnpm --filter "@unicep/status" test
+      - run: pnpm --filter "@unicep/site..." build
+      - run: pnpm --filter "@unicep/site" typecheck
+      - run: pnpm --filter "@unicep/site" test
 
   deploy:
     name: Deploy to Render

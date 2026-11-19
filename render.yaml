@@ -1,14 +1,14 @@
-# Render Blueprint for the status page (apps/status).
-# Deploys are triggered by the "Deploy status page" GitHub workflow through a deploy hook, so
+# Render Blueprint for the site, i.e. docs and status page (apps/site).
+# Deploys are triggered by the "Deploy site" GitHub workflow through a deploy hook, so
 # Render's own auto-deploy is turned off.
 services:
   - type: web
-    name: unicep-status
+    name: unicep-site
     runtime: node
     plan: free
     autoDeploy: false
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter "@unicep/status..." build
-    startCommand: node apps/status/dist/server/entry.mjs
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter "@unicep/site..." build
+    startCommand: node apps/site/dist/server/entry.mjs
     healthCheckPath: /
     envVars:
       - key: NODE_VERSION

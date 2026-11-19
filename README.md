@@ -77,12 +77,12 @@ Please use these free services responsibly:
 
 ## Status page
 
-[`apps/status`](apps/status) is an Astro (SSR) page that shows, for each built-in provider,
+[`apps/site`](apps/site) is an Astro (SSR) page that shows, for each built-in provider,
 whether it is online, its latency and the state of its circuit breaker. Checks are shared between
 visitors and refreshed at most once a minute.
 
 ```bash
-pnpm --filter @unicep/status dev
+pnpm --filter @unicep/site dev
 ```
 
 A [Render](https://render.com) blueprint is included in [`render.yaml`](render.yaml).

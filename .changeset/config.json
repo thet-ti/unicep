@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@unicep/status"]
+  "ignore": ["@unicep/site"]
 }
