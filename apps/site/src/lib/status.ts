@@ -29,6 +29,8 @@ export interface StatusSnapshot {
 }
 
 export interface StatusServiceOptions extends HttpProviderOptions {
+  /** AwesomeAPI key; the service may reject anonymous requests from cloud hosts. */
+  awesomeApiKey?: string | undefined;
   /** How long a snapshot is shared between visitors. Default: 60000. */
   cacheMs?: number;
   /** Probe timeout per provider. Default: 5000. */
@@ -50,7 +52,7 @@ interface Target {
  * requests share one in-flight check, so public traffic never multiplies calls to the services.
  */
 export function createStatusService(options: StatusServiceOptions = {}) {
-  const { cacheMs = 60_000, timeoutMs = 5_000, now = Date.now, ...http } = options;
+  const { cacheMs = 60_000, timeoutMs = 5_000, now = Date.now, awesomeApiKey, ...http } = options;
 
   const targets: Target[] = [
     { id: 'viacep', name: 'ViaCEP', url: 'https://viacep.com.br', provider: viaCep(http) },
@@ -65,7 +67,7 @@ export function createStatusService(options: StatusServiceOptions = {}) {
       id: 'awesomeapi',
       name: 'AwesomeAPI',
       url: 'https://docs.awesomeapi.com.br/api-cep',
-      provider: awesomeApi(http),
+      provider: awesomeApi({ ...http, apiKey: awesomeApiKey }),
     },
   ];
 
@@ -122,4 +124,7 @@ export function createStatusService(options: StatusServiceOptions = {}) {
 }
 
 /** Shared instance used by the page. */
-export const { getStatus } = createStatusService();
+export const { getStatus } = createStatusService({
+  // Set on the server (Render environment variable); never exposed to the browser.
+  awesomeApiKey: process.env.AWESOMEAPI_KEY || undefined,
+});

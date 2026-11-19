@@ -51,6 +51,17 @@ describe('status service', () => {
     expect(new Date(checkedAt).toISOString()).toBe(checkedAt);
   });
 
+  it('sends the AwesomeAPI key only to AwesomeAPI', async () => {
+    const fetch = fakeFetch();
+    const { getStatus } = createStatusService({ fetch, awesomeApiKey: 'secret-key' });
+    await getStatus();
+    const withToken = fetch.mock.calls
+      .map((call) => String(call[0]))
+      .filter((u) => u.includes('token='));
+    expect(withToken).toHaveLength(1);
+    expect(withToken[0]).toContain('awesomeapi');
+  });
+
   it('marks a failing provider offline without a latency', async () => {
     const { getStatus } = createStatusService({ fetch: fakeFetch(['brasilapi']) });
     const { providers } = await getStatus();

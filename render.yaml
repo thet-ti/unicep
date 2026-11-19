@@ -26,3 +26,6 @@ services:
         value: 0.0.0.0
       - key: SITE_URL
         value: https://unicep.thet.dev
+      # AwesomeAPI key for the status page. Secret: set its value in the Render dashboard.
+      - key: AWESOMEAPI_KEY
+        sync: false
