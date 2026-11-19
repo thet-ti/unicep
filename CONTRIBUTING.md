@@ -55,19 +55,18 @@ Two GitHub Actions workflows ship the project. Both run on pushes to `main`.
 3. Merging that pull request publishes the new versions of `@unicep/*` to npm with provenance
    and creates the GitHub releases.
 
-**Site: documentation and status page** (`.github/workflows/deploy-site.yml`)
+**Site: documentation and status page** (`render.yaml`)
 
-After a push to `main` that touches the site app, the core package or the deploy config
-(or when run manually), the workflow builds and tests the app and then calls the Render deploy
-hook for that exact commit. Render's own auto-deploy is off (see `render.yaml`).
+Render deploys the site through its GitHub integration. After a push to `main`, it waits for the
+CI checks to pass (`autoDeployTrigger: checksPass`) and rebuilds only when the site, the core
+package or the workspace configuration changed (`buildFilter`). There is no deploy workflow and no
+deploy secret. To set it up, create a Blueprint in Render from this repository.
 
 Required setup:
 
-| Where                  | Name                     | What                                                                            |
-| ---------------------- | ------------------------ | ------------------------------------------------------------------------------- |
-| Repository secret      | `NPM_TOKEN`              | npm automation token that can publish the `@unicep/*` packages                  |
-| Repository secret      | `RENDER_DEPLOY_HOOK_URL` | Deploy hook of the Render service (Settings > Deploy Hook)                      |
-| Repository environment | `production`             | Used by the deploy job; add required reviewers here if you want manual approval |
+| Where             | Name        | What                                                           |
+| ----------------- | ----------- | -------------------------------------------------------------- |
+| Repository secret | `NPM_TOKEN` | npm automation token that can publish the `@unicep/*` packages |
 
 The first publish of each package must come from a token. Once the packages exist you can
 switch to npm trusted publishing (GitHub OIDC) and drop `NPM_TOKEN`.
@@ -85,7 +84,6 @@ switch to npm trusted publishing (GitHub OIDC) and drop `NPM_TOKEN`.
   workflow tokens default to read-only, and workflows from external contributors need approval.
 - **Secrets and alerts:** secret scanning, push protection, Dependabot alerts and security
   updates, and private vulnerability reporting are enabled.
-- **Environment:** the `production` environment can only be deployed from `main`.
 
 The release workflow opens the "version packages" pull request with the workflow token. That
 requires "Allow GitHub Actions to create and approve pull requests" to be enabled in the

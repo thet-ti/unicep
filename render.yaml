@@ -1,12 +1,21 @@
 # Render Blueprint for the site, i.e. docs and status page (apps/site).
-# Deploys are triggered by the "Deploy site" GitHub workflow through a deploy hook, so
-# Render's own auto-deploy is turned off.
+# Render deploys it through its GitHub integration: on each push to the linked branch it waits
+# for the repository's CI checks (`checksPass`) and only rebuilds when the files below change.
 services:
   - type: web
     name: unicep-site
     runtime: node
     plan: free
-    autoDeploy: false
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - apps/site/**
+        - packages/core/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter "@unicep/site..." build
     startCommand: node apps/site/dist/server/entry.mjs
     healthCheckPath: /
