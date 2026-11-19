@@ -71,6 +71,23 @@ Com ele, quando a consulta não deu certo, a unicep ainda tenta os providers que
 ordem de prioridade), sem passar pelo circuit breaker. Se um deles responder, o circuito dele
 fecha. Se todos falharem, o erro traz o motivo real de cada um, e não "circuito aberto".
 
+## Estados e cidades
+
+`states()` e `cities(uf)` listam os estados e as cidades de um estado, com o mesmo fallback e os
+mesmos circuit breakers da consulta de CEP. O resultado vem ordenado por nome e fica em cache por
+24 horas.
+
+```ts
+const states = await unicep.states(); // [{ id: 12, uf: 'AC', name: 'Acre' }, ...]
+const cities = await unicep.cities('SP'); // [{ name: 'Adamantina', ibgeCode: '3500105' }, ...]
+```
+
+Os providers padrão são BrasilAPI e IBGE, nessa ordem. O BrasilAPI divide o circuito com o
+provider de CEP de mesmo nome. Use `localities.providers` para trocá-los (veja `LocalityProvider`),
+`localities.cache` para ajustar o cache (ou `false` para desligar) e `localitiesStatus()` para ver
+os circuitos. `ufs`, `isValidUf()` e `normalizeUf()` também são exportados. Uma UF desconhecida
+lança `InvalidStateError`, e se todos os providers falharem o erro é `AllLocalityProvidersFailedError`.
+
 ## Retry
 
 Por padrão, um provider que falha é pulado na hora. Para repetir o mesmo provider antes de passar
