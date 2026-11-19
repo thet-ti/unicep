@@ -2,4 +2,4 @@
 "@unicep/core": minor
 ---
 
-Add an optional `apiKey` to the AwesomeAPI provider (and `apiKeys` to `defaultProviders`), sent as the `token` query parameter.
+AwesomeAPI now needs an API key: it is no longer part of `defaultProviders()`. Pass `awesomeApi({ apiKey })`, or `defaultProviders({ apiKeys: { awesomeapi } })` to append it. The key is sent as the `token` query parameter.
