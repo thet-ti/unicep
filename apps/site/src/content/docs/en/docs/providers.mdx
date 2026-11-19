@@ -30,6 +30,23 @@ const unicep = new Unicep({
 });
 ```
 
+### Order from configuration
+
+To choose the order without building the list by hand (for example from an environment
+variable), use `order` in `defaultProviders()`. The listed providers come first; the rest follow
+as fallback:
+
+```ts
+// VITE_ADDRESS_PROVIDER="viacep,brasilapi"
+defaultProviders({ order: import.meta.env.VITE_ADDRESS_PROVIDER });
+// ViaCEP, BrasilAPI and then OpenCEP
+
+defaultProviders({ order: ['opencep'] }); // OpenCEP, ViaCEP, BrasilAPI
+```
+
+The names are `viacep`, `brasilapi`, `opencep` and `awesomeapi` (case insensitive). An unknown name
+throws a `TypeError` listing the valid ones.
+
 ## Configuring a provider
 
 All built-in providers accept the same options:
