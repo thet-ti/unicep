@@ -39,8 +39,6 @@ export interface Messages {
   npm: (version: string) => string;
   language: string;
   motd: string;
-  openSource: string;
-  license: string;
 }
 
 export const messages: Record<Locale, Messages> = {
@@ -61,9 +59,7 @@ export const messages: Record<Locale, Messages> = {
     github: 'unicep no GitHub',
     npm: (version) => `@unicep/core ${version} no npm`,
     language: 'Idioma',
-    motd: 'A única forma de procurar um CEP que não cai.',
-    openSource: 'Open source',
-    license: 'sob a licença MIT.',
+    motd: 'A Única Forma de Procurar um CEP.',
   },
   en: {
     description: 'Live status of the CEP providers used by unicep.',
@@ -82,8 +78,6 @@ export const messages: Record<Locale, Messages> = {
     github: 'unicep on GitHub',
     npm: (version) => `@unicep/core ${version} on npm`,
     language: 'Language',
-    motd: "The only way to look up a CEP that doesn't go down.",
-    openSource: 'Open source',
-    license: 'under the MIT license.',
+    motd: 'The Only Way to Look Up a CEP.',
   },
 };
