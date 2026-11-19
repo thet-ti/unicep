@@ -62,14 +62,11 @@ CI checks to pass (`autoDeployTrigger: checksPass`) and rebuilds only when the s
 package or the workspace configuration changed (`buildFilter`). There is no deploy workflow and no
 deploy secret. To set it up, create a Blueprint in Render from this repository.
 
-Required setup:
-
-| Where             | Name        | What                                                           |
-| ----------------- | ----------- | -------------------------------------------------------------- |
-| Repository secret | `NPM_TOKEN` | npm automation token that can publish the `@unicep/*` packages |
-
-The first publish of each package must come from a token. Once the packages exist you can
-switch to npm trusted publishing (GitHub OIDC) and drop `NPM_TOKEN`.
+Publishing uses npm trusted publishing (GitHub OIDC), so there is no npm token. Each `@unicep/*`
+package has a trusted publisher configured on npmjs.com (_package → Settings → Trusted Publisher_)
+with organization `thet-ti`, repository `unicep`, workflow `release.yml`, no environment, and
+"Allow npm publish" checked. A new package needs the same setup after its first publish, which has
+to be done once with a temporary token.
 
 ## Repository security (maintainers)
 
