@@ -1,0 +1,97 @@
+---
+title: Vue
+description: O composable useCep para Vue 3.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+`@unicep/vue` traz o composable `useCep`. Requer Vue 3.3 ou superior.
+
+<Tabs syncKey="pm">
+<TabItem label="npm">
+
+```bash
+npm install @unicep/vue
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```bash
+pnpm add @unicep/vue
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```bash
+yarn add @unicep/vue
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```bash
+bun add @unicep/vue
+```
+
+</TabItem>
+</Tabs>
+
+O `@unicep/core` é instalado junto, como dependência.
+
+## Uso
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useCep } from '@unicep/vue';
+
+const cep = ref('');
+const { data, error, isLoading } = useCep(cep);
+</script>
+
+<template>
+  <input v-model="cep" placeholder="00000-000" />
+  <p v-if="isLoading">Buscando…</p>
+  <p v-else-if="error">{{ error.message }}</p>
+  <p v-else-if="data">{{ data.street }}, {{ data.neighborhood }} - {{ data.city }}/{{ data.state }}</p>
+</template>
+```
+
+A consulta só roda quando o valor é um CEP válido (com ou sem hífen). Entradas parciais são
+ignoradas, então dá para ligar o composable direto a um campo de texto. Quando o CEP muda, o
+resultado anterior some e a requisição em andamento é cancelada.
+
+## API
+
+```ts
+useCep(cep: MaybeRefOrGetter<string | null | undefined>, options?: {
+  unicep?: Unicep;                      // padrão: instância compartilhada com todos os providers
+  enabled?: MaybeRefOrGetter<boolean>;  // false pausa as consultas, padrão true
+}): {
+  data: Ref<Address | undefined>;
+  error: Ref<Error | undefined>;
+  isLoading: Ref<boolean>; // true enquanto a consulta do CEP válido atual está em andamento
+}
+```
+
+`cep` e `enabled` aceitam um ref, um getter ou um valor simples. `error` é um dos
+[erros](/docs/errors) da unicep, como `CepNotFoundError` ou `AllProvidersFailedError`.
+
+## Providers e configurações próprias
+
+```ts
+import { Unicep, viaCep, brasilApi } from '@unicep/core';
+
+// Crie uma vez, num módulo, para manter o estado dos circuit breakers.
+const unicep = new Unicep({
+  providers: [viaCep(), brasilApi()],
+  timeoutMs: 3000,
+  cache: {},
+});
+
+const { data } = useCep(cep, { unicep });
+```
+
+Veja [Providers](/docs/providers) e [Núcleo](/docs/core) para todas as opções.

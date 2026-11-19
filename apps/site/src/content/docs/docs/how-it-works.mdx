@@ -1,0 +1,67 @@
+---
+title: Como funciona
+description: Providers, fallback, circuit breaker e o que conta como falha.
+---
+
+A unicep separa duas peças:
+
+- **Provider**: um adaptador para um serviço de CEP. Ele faz a chamada HTTP e converte a resposta
+  para o objeto `Address` normalizado.
+- **`Unicep`**: recebe uma lista ordenada de providers, protege cada um com um circuit breaker e
+  tenta um por um até um responder.
+
+```
+ sua aplicação ──▶ Unicep ──▶ ViaCEP ──▶ BrasilAPI ──▶ OpenCEP ──▶ AwesomeAPI
+                    │          (cada provider tem o seu circuit breaker)
+                    └── sempre devolve o mesmo objeto Address
+```
+
+## O caminho de uma consulta
+
+1. O CEP é validado (`01310100` ou `01310-100`). CEP inválido lança `InvalidCepError` sem fazer
+   nenhuma requisição.
+2. Se o [cache](/docs/core#cache) estiver ligado e o CEP já estiver nele, o endereço volta na hora.
+3. Os providers são tentados na ordem em que você os passou. Um provider com o circuito aberto é
+   pulado.
+4. Cada tentativa tem um timeout. Com [retry](/docs/core#retry) ligado, o mesmo provider é
+   repetido antes de passar para o próximo.
+5. O primeiro provider que responde vence. O resultado recebe o nome dele em `provider`.
+
+## Circuit breaker
+
+Cada provider tem o seu próprio circuit breaker, que conta falhas **consecutivas**:
+
+| Estado | O que acontece |
+| --- | --- |
+| `closed` | Funcionamento normal. As requisições passam. |
+| `open` | Depois de `failureThreshold` falhas seguidas (padrão 3), o provider é pulado sem fazer requisição. |
+| `half-open` | Passado `resetTimeoutMs` (padrão 30 s), uma requisição de teste decide se o circuito fecha ou abre de novo. |
+
+Assim, um serviço fora do ar deixa de atrasar todas as consultas: a unicep passa direto para o
+próximo provider até o primeiro se recuperar.
+
+## O que conta como falha
+
+| Situação | Conta no circuit breaker? | O que a unicep faz |
+| --- | --- | --- |
+| Erro de rede, timeout, HTTP 5xx ou 429, resposta inválida | Sim | Tenta o próximo provider |
+| "CEP não encontrado" | Não | Tenta o próximo provider, porque a cobertura varia entre serviços |
+| Cancelamento por `AbortSignal` | Não | Interrompe e rejeita com o motivo do cancelamento |
+
+Se todos os providers que responderam disseram "não encontrado", você recebe
+`CepNotFoundError`. Se nenhum conseguiu responder, recebe `AllProvidersFailedError`, com um erro
+por provider. Veja [Erros](/docs/errors).
+
+## Acompanhando o estado
+
+```ts
+unicep.status();
+// [
+//   { name: 'viacep', circuit: 'closed' },
+//   { name: 'brasilapi', circuit: 'open' },
+//   ...
+// ]
+```
+
+A [página de status](/status) do projeto usa exatamente isso para mostrar, em tempo real, se cada
+provider está online, a latência e o estado do circuito.

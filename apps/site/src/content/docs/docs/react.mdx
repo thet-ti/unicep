@@ -1,0 +1,103 @@
+---
+title: React
+description: O hook useCep para React 18 ou superior.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+`@unicep/react` traz o hook `useCep`. Requer React 18 ou superior.
+
+<Tabs syncKey="pm">
+<TabItem label="npm">
+
+```bash
+npm install @unicep/react
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```bash
+pnpm add @unicep/react
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```bash
+yarn add @unicep/react
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```bash
+bun add @unicep/react
+```
+
+</TabItem>
+</Tabs>
+
+O `@unicep/core` é instalado junto, como dependência.
+
+## Uso
+
+```tsx
+import { useState } from 'react';
+import { useCep } from '@unicep/react';
+
+export function CampoCep() {
+  const [valor, setValor] = useState('');
+  const { data, error, isLoading } = useCep(valor);
+
+  return (
+    <>
+      <input value={valor} onChange={(e) => setValor(e.target.value)} placeholder="00000-000" />
+      {isLoading && <p>Buscando…</p>}
+      {error && <p>{error.message}</p>}
+      {data && (
+        <p>
+          {data.street}, {data.neighborhood} - {data.city}/{data.state}
+        </p>
+      )}
+    </>
+  );
+}
+```
+
+A consulta só roda quando o valor é um CEP válido (com ou sem hífen). Entradas parciais são
+ignoradas, então dá para ligar o hook direto a um campo de texto. Quando o CEP muda, o resultado
+anterior some e a requisição em andamento é cancelada.
+
+## API
+
+```ts
+useCep(cep: string | null | undefined, options?: {
+  unicep?: Unicep;    // padrão: instância compartilhada com todos os providers embutidos
+  enabled?: boolean;  // false pausa as consultas, padrão true
+}): {
+  data: Address | undefined;
+  error: Error | undefined;
+  isLoading: boolean; // true enquanto a consulta do CEP válido atual está em andamento
+}
+```
+
+`error` é um dos [erros](/docs/errors) da unicep, como `CepNotFoundError` ou
+`AllProvidersFailedError`.
+
+## Providers e configurações próprias
+
+```tsx
+import { Unicep, viaCep, brasilApi } from '@unicep/core';
+
+// Crie uma vez, fora do componente, para manter o estado dos circuit breakers.
+const unicep = new Unicep({
+  providers: [viaCep(), brasilApi()],
+  timeoutMs: 3000,
+  cache: {},
+});
+
+const { data } = useCep(valor, { unicep });
+```
+
+Veja [Providers](/docs/providers) e [Núcleo](/docs/core) para todas as opções.

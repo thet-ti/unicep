@@ -1,0 +1,106 @@
+---
+title: Providers
+description: Providers embutidos, configuração, ordem, providers próprios e uso responsável.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Um **provider** é o adaptador de um serviço de CEP. A unicep traz quatro, todos funcionam direto
+do navegador (os serviços enviam CORS) e devolvem o mesmo objeto `Address`.
+
+| Função | Serviço | Devolve `complement` | Devolve `ibgeCode` |
+| --- | --- | --- | --- |
+| `viaCep()` | [ViaCEP](https://viacep.com.br) | sim | sim |
+| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | não | sim |
+| `openCep()` | [OpenCEP](https://opencep.com) | sim | sim |
+| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | não | sim |
+
+`defaultProviders()` devolve os quatro nessa ordem.
+
+## Escolhendo e ordenando
+
+A ordem da lista é a ordem de prioridade. Passe só os que você quer, na ordem que preferir:
+
+```ts
+import { Unicep, brasilApi, openCep, viaCep } from '@unicep/core';
+
+const unicep = new Unicep({
+  providers: [brasilApi(), viaCep(), openCep()],
+});
+```
+
+## Configurando um provider
+
+Todos os providers embutidos aceitam as mesmas opções:
+
+| Opção | Descrição |
+| --- | --- |
+| `fetch` | Sua própria implementação de `fetch` (padrão `globalThis.fetch`). Útil para testes, proxies e runtimes customizados. |
+| `baseUrl` | Troca o endereço do serviço, para usar um proxy ou uma instância própria. |
+
+```ts
+import { Unicep, brasilApi, viaCep } from '@unicep/core';
+
+const unicep = new Unicep({
+  providers: [
+    viaCep({ baseUrl: 'https://meu-proxy.exemplo.com/viacep' }),
+    brasilApi({ fetch: meuFetch }),
+  ],
+});
+```
+
+Para aplicar as mesmas opções a todos: `defaultProviders({ fetch: meuFetch })`.
+
+<Aside type="note">
+  No navegador, a requisição de cada provider só envia o cabeçalho `Accept`, então não gera
+  preflight de CORS. Se você usar um proxy próprio, mantenha isso.
+</Aside>
+
+## Criando um provider
+
+Implemente a interface `CepProvider`:
+
+```ts
+import { CepNotFoundError, ProviderError, type CepProvider } from '@unicep/core';
+
+const meuProvider: CepProvider = {
+  name: 'minha-api',
+  async lookup(cep, { signal }) {
+    const response = await fetch(`https://minha-api.exemplo.com/cep/${cep}`, { signal });
+    if (response.status === 404) throw new CepNotFoundError(cep);
+    if (!response.ok) throw new ProviderError('minha-api', `HTTP ${response.status}`);
+
+    const data = await response.json();
+    return {
+      cep,
+      street: data.rua,
+      neighborhood: data.bairro,
+      city: data.cidade,
+      state: data.uf,
+    };
+  },
+};
+```
+
+Regras:
+
+- Devolva o endereço **sem** o campo `provider`; a unicep preenche com o `name`.
+- Lance `CepNotFoundError` quando o CEP não existe, e qualquer outro erro (de preferência
+  `ProviderError`) para falhas do serviço. Só falhas contam para o circuit breaker.
+- Repasse o `signal` ao `fetch`, para que timeout e cancelamento funcionem.
+- O `name` precisa ser único na instância.
+
+## Uso responsável
+
+A unicep **não fornece, hospeda nem é dona** de nenhum dado ou API de CEP. Ela é um cliente que
+consulta serviços públicos independentes, cada um com seus próprios termos, limites e
+disponibilidade. O projeto não é afiliado a nenhum deles.
+
+<Aside type="caution" title="Seja um bom cidadão">
+  - Ative o [cache](/docs/core#cache) para não repetir a mesma consulta.
+  - Não use a unicep para varrer ou validar bases inteiras. Alguns serviços avisam que uso
+    automatizado intenso pode bloquear o acesso. Para volume, use uma base baixável (o OpenCEP
+    publica uma) ou hospede a sua.
+  - Leia os termos de cada serviço. Em uso comercial crítico, considere falar com os
+    mantenedores ou rodar uma instância própria pela opção `baseUrl`.
+</Aside>

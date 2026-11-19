@@ -1,0 +1,59 @@
+---
+title: Implement with AI
+description: How to use AI agents with the unicep documentation, with llms.txt, Markdown pages and ready-made prompts.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import AiPrompt from '../../../../components/AiPrompt.astro';
+
+This documentation is written to be read by AI agents as much as by people. You can ask an agent
+(Claude, ChatGPT, Cursor, Claude Code and others) to implement CEP lookup in your project with
+the right context from the start.
+
+## Buttons on every page
+
+At the top of every documentation page there are two buttons:
+
+- **Copy Markdown**: copies the page content as clean Markdown, ready to paste into a chat.
+- **Open**: opens the page in Claude, ChatGPT and others, with a request for the agent to read
+  the page and help you.
+
+## Files for agents
+
+| URL | Content |
+| --- | --- |
+| `/llms.txt` | Documentation index, with a project summary and links. |
+| `/_llms-txt/english.txt` | The whole English documentation in a single text file. |
+| `/llms-full.txt` | The same documentation in Portuguese (the site's default language). |
+| `/en/docs/<page>.md` | Any page as Markdown: just append `.md` to the URL. |
+
+Point the agent at `/_llms-txt/english.txt` and it will have all the context at once.
+
+## Ready-made prompts
+
+Pick your environment, copy the prompt and paste it into your agent, or open it straight in
+Claude or ChatGPT. Each prompt already includes an API summary and the link to the full
+documentation.
+
+<Tabs syncKey="framework">
+<TabItem label="React">
+    <AiPrompt framework="react" locale="en" />
+</TabItem>
+<TabItem label="Vue">
+    <AiPrompt framework="vue" locale="en" />
+</TabItem>
+<TabItem label="Angular">
+    <AiPrompt framework="angular" locale="en" />
+</TabItem>
+<TabItem label="Node.js">
+    <AiPrompt framework="node" locale="en" />
+</TabItem>
+</Tabs>
+
+## Tips
+
+- If the agent runs in your terminal (for example Claude Code), paste the prompt straight into it:
+  it can read the documentation file and change your project.
+- Ask it to create the `Unicep` instance once and enable the [cache](/en/docs/core#cache).
+- Review the generated code: make sure the [errors](/en/docs/errors) are handled and that the
+  [use of the providers](/en/docs/providers#responsible-use) is responsible.

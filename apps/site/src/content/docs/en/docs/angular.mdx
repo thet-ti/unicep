@@ -1,0 +1,120 @@
+---
+title: Angular
+description: injectCep with signals, lookupCep with RxJS and the UNICEP token.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+`@unicep/angular` provides signal and RxJS bindings. It requires Angular 17 or newer and RxJS 7.
+The package uses no decorators, so it works with the standard Angular build.
+
+<Tabs syncKey="pm">
+<TabItem label="npm">
+
+```bash
+npm install @unicep/angular
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```bash
+pnpm add @unicep/angular
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```bash
+yarn add @unicep/angular
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```bash
+bun add @unicep/angular
+```
+
+</TabItem>
+</Tabs>
+
+`@unicep/core` is installed as a dependency.
+
+## Usage with signals
+
+`injectCep` must be called in an injection context, such as a component or service field or
+constructor.
+
+```ts
+import { Component, signal } from '@angular/core';
+import { injectCep } from '@unicep/angular';
+
+@Component({
+  selector: 'app-cep-field',
+  template: `
+    <input [value]="value()" (input)="value.set($any($event.target).value)" placeholder="00000-000" />
+    @if (cep.isLoading()) { <p>Searching…</p> }
+    @if (cep.error(); as error) { <p>{{ error.message }}</p> }
+    @if (cep.data(); as address) {
+      <p>{{ address.street }}, {{ address.neighborhood }} - {{ address.city }}/{{ address.state }}</p>
+    }
+  `,
+})
+export class CepFieldComponent {
+  readonly value = signal('');
+  readonly cep = injectCep(() => this.value());
+}
+```
+
+The lookup runs only when the value is a valid CEP (with or without hyphen), so partial input is
+ignored. When the CEP changes, the previous result is dropped and the in-flight request is
+cancelled.
+
+## API
+
+### `injectCep(cep, options?)`
+
+```ts
+injectCep(cep: () => string | null | undefined, options?: {
+  unicep?: Unicep;           // default: the instance provided through the UNICEP token
+  enabled?: () => boolean;   // return false to pause lookups, default always enabled
+}): {
+  data: Signal<Address | undefined>;
+  error: Signal<Error | undefined>;
+  isLoading: Signal<boolean>; // true while a lookup for the current valid CEP is in flight
+}
+```
+
+### `lookupCep(unicep, cep)`
+
+Observable version, for RxJS pipelines. Unsubscribing cancels the request.
+
+```ts
+import { inject } from '@angular/core';
+import { lookupCep, UNICEP } from '@unicep/angular';
+
+const unicep = inject(UNICEP);
+lookupCep(unicep, '01310100').subscribe((address) => console.log(address));
+```
+
+### `UNICEP` and `provideUnicep(unicep)`
+
+`UNICEP` is the injection token for the `Unicep` instance. It defaults to a shared instance with
+all built-in providers. Override it to customize providers, timeout, cache or circuit breaker:
+
+```ts
+import { ApplicationConfig } from '@angular/core';
+import { Unicep, viaCep, brasilApi } from '@unicep/core';
+import { provideUnicep } from '@unicep/angular';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideUnicep(new Unicep({ providers: [viaCep(), brasilApi()], timeoutMs: 3000, cache: {} })),
+  ],
+};
+```
+
+`error` is one of the unicep [errors](/en/docs/errors), such as `CepNotFoundError` or
+`AllProvidersFailedError`. See [Providers](/en/docs/providers) and [Core](/en/docs/core) for every
+option.

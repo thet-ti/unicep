@@ -1,0 +1,85 @@
+---
+title: Primeiros passos
+description: Instale a unicep e faça a sua primeira consulta de CEP.
+---
+
+import { Tabs, TabItem, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+A **unicep** consulta vários serviços públicos de CEP por trás de uma única interface. Quando um
+serviço cai, ela detecta a falha com um circuit breaker e troca para o próximo, devolvendo sempre
+o mesmo objeto `Address`. Funciona no navegador e no Node.js 20 ou superior.
+
+## Instalação
+
+<Tabs syncKey="pm">
+<TabItem label="npm">
+
+```bash
+npm install @unicep/core
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```bash
+pnpm add @unicep/core
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```bash
+yarn add @unicep/core
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```bash
+bun add @unicep/core
+```
+
+</TabItem>
+</Tabs>
+
+## Sua primeira consulta
+
+```ts
+import { Unicep, defaultProviders } from '@unicep/core';
+
+const unicep = new Unicep({ providers: defaultProviders() });
+
+const address = await unicep.lookup('01310-100'); // o hífen é opcional
+// {
+//   cep: '01310100',
+//   street: 'Avenida Paulista',
+//   complement: 'de 612 a 1510 - lado par',
+//   neighborhood: 'Bela Vista',
+//   city: 'São Paulo',
+//   state: 'SP',
+//   ibgeCode: '3550308',
+//   provider: 'viacep'
+// }
+```
+
+`complement` e `ibgeCode` são opcionais, porque nem todo provider devolve esses campos. Para CEPs
+de cidades inteiras, `street` e `neighborhood` vêm como string vazia. O campo `provider` diz qual
+serviço respondeu.
+
+## Escolha o seu framework
+
+O núcleo é TypeScript puro e serve para qualquer backend ou frontend. Para quem usa um framework,
+há bindings que consultam sozinhos assim que o valor vira um CEP válido.
+
+<CardGrid>
+  <LinkCard title="React" description="Hook useCep" href="/docs/react" />
+  <LinkCard title="Vue" description="Composable useCep" href="/docs/vue" />
+  <LinkCard title="Angular" description="injectCep com signals e RxJS" href="/docs/angular" />
+  <LinkCard title="Implementar com IA" description="Prompts prontos e llms.txt" href="/docs/ai" />
+</CardGrid>
+
+## Próximos passos
+
+- Entenda [como a unicep funciona](/docs/how-it-works): fallback, circuit breaker e erros.
+- Veja o [guia do núcleo](/docs/core) para timeout, retry, cache e cancelamento.
+- Configure ou crie [providers](/docs/providers).

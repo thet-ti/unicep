@@ -1,0 +1,58 @@
+---
+title: Implementar com IA
+description: Como usar agentes de IA com a documentação da unicep, com llms.txt, páginas em Markdown e prompts prontos.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import AiPrompt from '../../../components/AiPrompt.astro';
+
+Esta documentação foi pensada para ser lida por agentes de IA tanto quanto por pessoas. Dá para
+pedir a um agente (Claude, ChatGPT, Cursor, Claude Code e outros) que implemente a consulta de CEP
+no seu projeto já com o contexto certo.
+
+## Botões em cada página
+
+No topo de cada página da documentação há dois botões:
+
+- **Copiar Markdown**: copia o conteúdo da página em Markdown limpo, pronto para colar num chat.
+- **Abrir**: abre a página já no Claude, no ChatGPT e em outros, com um pedido para o agente ler
+  a página e te ajudar.
+
+## Arquivos para agentes
+
+| URL | Conteúdo |
+| --- | --- |
+| `/llms.txt` | Índice da documentação, com um resumo do projeto e links. |
+| `/llms-full.txt` | Toda a documentação em português, em um único arquivo de texto. |
+| `/_llms-txt/english.txt` | A mesma documentação em inglês. |
+| `/docs/<página>.md` | Qualquer página em Markdown: basta acrescentar `.md` à URL. |
+
+Aponte o agente para `/llms-full.txt` e ele terá todo o contexto de uma vez.
+
+## Prompts prontos
+
+Escolha o seu ambiente, copie o prompt e cole no seu agente, ou abra direto no Claude ou no
+ChatGPT. Cada prompt já traz um resumo da API e o link para a documentação completa.
+
+<Tabs syncKey="framework">
+<TabItem label="React">
+    <AiPrompt framework="react" locale="pt-br" />
+</TabItem>
+<TabItem label="Vue">
+    <AiPrompt framework="vue" locale="pt-br" />
+</TabItem>
+<TabItem label="Angular">
+    <AiPrompt framework="angular" locale="pt-br" />
+</TabItem>
+<TabItem label="Node.js">
+    <AiPrompt framework="node" locale="pt-br" />
+</TabItem>
+</Tabs>
+
+## Dicas
+
+- Se o agente roda no seu terminal (por exemplo, o Claude Code), cole o prompt direto nele: ele
+  consegue ler o `llms-full.txt` e alterar o seu projeto.
+- Peça para ele criar a instância do `Unicep` uma única vez e ligar o [cache](/docs/core#cache).
+- Revise o código gerado: confirme que os [erros](/docs/errors) são tratados e que o
+  [uso dos providers](/docs/providers#uso-responsável) é responsável.
