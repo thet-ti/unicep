@@ -1,6 +1,6 @@
 {
   "name": "@unicep/vue",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Vue 3 composable for @unicep/core",
   "license": "MIT",
   "repository": {
