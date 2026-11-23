@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { type Locale, messages, routes } from '../i18n/ui';
 import { npmPackageUrl, repositoryUrl } from '../lib/site';
+import AiButtons from './AiButtons.astro';
 
 interface Props {
   locale: Locale;
@@ -53,6 +54,9 @@ const jsonLd = {
     <div class="actions">
       <a class="button primary" href={routes.docs[locale]}>{t.readDocs}</a>
       <a class="button" href={routes.status[locale]}>{t.viewStatus}</a>
+    </div>
+    <div class="actions ai-actions">
+      <AiButtons locale={locale} />
     </div>
   </section>
 
@@ -127,6 +131,7 @@ const jsonLd = {
   .button {
     display: inline-flex;
     align-items: center;
+    gap: 8px;
     height: 42px;
     padding: 0 18px;
     border: 1px solid var(--border);
@@ -138,6 +143,22 @@ const jsonLd = {
     transition:
       background 0.15s,
       border-color 0.15s;
+  }
+
+  .ai-actions {
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .ai-label {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .icon-button {
+    justify-content: center;
+    width: 42px;
+    padding: 0;
   }
 
   .button:hover {

@@ -131,6 +131,56 @@ export function buildPrompt(framework: Framework, locale: Locale, docsUrl: strin
   ].join('\n');
 }
 
+const genericCopy = {
+  'pt-br': {
+    intro:
+      'Implemente a consulta de CEP no meu projeto usando a biblioteca unicep. Antes de escrever código, identifique o framework do projeto (olhe o package.json e a estrutura de pastas) e instale o pacote certo. Se você não tiver acesso ao meu código, pergunte qual framework eu uso.',
+    packages: 'Pacotes:',
+    need: 'O que eu preciso:',
+    requirements: [
+      'Um campo de CEP com máscara 00000-000 que busca o endereço sozinho quando o CEP estiver completo.',
+      'Preencha rua, bairro, cidade e UF com o resultado e mostre estados de carregamento e de erro.',
+      'Mostre mensagens diferentes para "CEP não encontrado" e "serviços indisponíveis".',
+      'Crie a instância do Unicep uma única vez, com cache ligado.',
+    ],
+  },
+  en: {
+    intro:
+      'Implement CEP lookup in my project using the unicep library. Before writing code, identify the framework the project uses (check package.json and the folder structure) and install the right package. If you cannot access my code, ask me which framework I use.',
+    packages: 'Packages:',
+    need: 'What I need:',
+    requirements: [
+      'A CEP field with a 00000-000 mask that fetches the address on its own once the CEP is complete.',
+      'Fill in street, neighborhood, city and state from the result, and show loading and error states.',
+      'Show different messages for "CEP not found" and "services unavailable".',
+      'Create the Unicep instance once, with the cache enabled.',
+    ],
+  },
+} satisfies Record<Locale, unknown>;
+
+/** Builds a prompt that assumes no framework: the agent picks the package that fits the project. */
+export function buildGenericPrompt(locale: Locale, docsUrl: string): string {
+  const c = genericCopy[locale];
+  const k = copy[locale];
+  return [
+    c.intro,
+    '',
+    `${k.docs} ${docsUrl}`,
+    '',
+    c.packages,
+    '- React: npm install @unicep/react (useCep)',
+    '- Vue: npm install @unicep/vue (useCep)',
+    '- Angular: npm install @unicep/angular (injectCep, provideUnicep)',
+    '- Node.js / other: npm install @unicep/core (new Unicep({ providers: defaultProviders(), cache: {} }).lookup(cep))',
+    `- ${k.errors}`,
+    '',
+    c.need,
+    ...c.requirements.map((line, index) => `${index + 1}. ${line}`),
+    '',
+    k.outro,
+  ].join('\n');
+}
+
 export function claudeUrl(prompt: string): string {
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 }
