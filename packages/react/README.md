@@ -61,6 +61,29 @@ useCep(cep: string | null | undefined, options?: {
 [`@unicep/core`](https://github.com/thet-ti/unicep/tree/main/packages/core#errors), such as
 `CepNotFoundError` or `AllProvidersFailedError`.
 
+## Global provider and `useUnicep`
+
+Wrap the app in a `UnicepProvider` to give every `useCep` (and `useUnicep`) below it a configured
+instance. `useUnicep()` returns that instance for imperative lookups, and falls back to the shared
+default instance when there is no provider:
+
+```tsx
+import { Unicep, defaultProviders } from '@unicep/core';
+import { UnicepProvider, useUnicep } from '@unicep/react';
+
+const unicep = new Unicep({ providers: defaultProviders(), cache: {} });
+
+root.render(
+  <UnicepProvider unicep={unicep}>
+    <App />
+  </UnicepProvider>,
+);
+
+// inside a component
+const instance = useUnicep();
+const address = await instance.lookup(cep);
+```
+
 ## Custom providers or settings
 
 ```tsx
