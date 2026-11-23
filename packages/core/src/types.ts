@@ -69,6 +69,43 @@ export interface CacheOptions {
   maxEntries?: number;
 }
 
+/** A Brazilian state (UF). */
+export interface State {
+  /** IBGE code, e.g. `35`. */
+  id: number;
+  /** Two-letter abbreviation, e.g. `SP`. */
+  uf: string;
+  name: string;
+}
+
+/** A Brazilian municipality. */
+export interface City {
+  name: string;
+  /** 7-digit IBGE municipality code, e.g. `3550308`. */
+  ibgeCode: string;
+}
+
+/**
+ * Adapter for a service that lists states and cities. Providers that share a `name` with a
+ * `CepProvider` (for example `brasilapi`) share its circuit breaker.
+ */
+export interface LocalityProvider {
+  readonly name: string;
+  states(context: LookupContext): Promise<State[]>;
+  /** `uf` is always a valid, upper case abbreviation. */
+  cities(uf: string, context: LookupContext): Promise<City[]>;
+}
+
+export interface LocalitiesOptions {
+  /** Providers in priority order. Default: BrasilAPI, then IBGE. */
+  providers?: readonly LocalityProvider[];
+  /**
+   * Caches states and cities in memory (they almost never change). Pass `false` to disable.
+   * Default: 24 hours.
+   */
+  cache?: CacheOptions | false;
+}
+
 export interface UnicepOptions {
   /** Providers in priority order. */
   providers: readonly CepProvider[];
@@ -79,6 +116,8 @@ export interface UnicepOptions {
   retry?: RetryOptions;
   /** Caches successful lookups in memory. Disabled by default. */
   cache?: CacheOptions;
+  /** Where `states()` and `cities()` get their data. */
+  localities?: LocalitiesOptions;
 }
 
 export interface LookupOptions {
