@@ -62,8 +62,8 @@ const address = await unicep.lookup('01310-100'); // with or without the hyphen
 // }
 ```
 
-The `provider` field tells you who answered. `complement` and `ibgeCode` may be missing, because
-not every service returns them. For CEPs that cover a whole city, `street` and `neighborhood`
+The `provider` field tells you who answered. `complement`, `ibgeCode`, `latitude` and `longitude` may
+be missing, because not every service returns them (only BrasilAPI and AwesomeAPI send coordinates). For CEPs that cover a whole city, `street` and `neighborhood`
 are empty.
 
 ## With your framework

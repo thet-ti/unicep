@@ -10,6 +10,10 @@ export interface Address {
   state: string;
   /** 7-digit IBGE municipality code, when the provider exposes it. */
   ibgeCode?: string | undefined;
+  /** Latitude in decimal degrees, when the provider exposes it (always together with `longitude`). */
+  latitude?: number | undefined;
+  /** Longitude in decimal degrees, when the provider exposes it (always together with `latitude`). */
+  longitude?: number | undefined;
   /** Name of the provider that answered the lookup. */
   provider: string;
 }

@@ -3,6 +3,7 @@ import type { CepProvider } from '../types';
 import {
   badStatus,
   buildAddress,
+  coordinate,
   getJson,
   type HttpProviderOptions,
   isRecord,
@@ -39,6 +40,8 @@ export function awesomeApi(options: AwesomeApiOptions = {}): CepProvider {
         city: text(data.city),
         state: text(data.state),
         ibgeCode: text(data.city_ibge),
+        latitude: coordinate(data.lat, 90),
+        longitude: coordinate(data.lng, 180),
       });
     },
   };

@@ -8,12 +8,12 @@ import { Aside } from '@astrojs/starlight/components';
 Um **provider** é o adaptador de um serviço de CEP. A unicep traz quatro, todos funcionam direto
 no navegador (os serviços liberam CORS) e devolvem o mesmo `Address`.
 
-| Função | Serviço | Chave de API | Traz `complement` | Traz `ibgeCode` |
-| --- | --- | --- | --- | --- |
-| `viaCep()` | [ViaCEP](https://viacep.com.br) | não | sim | sim |
-| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | não | não | sim |
-| `openCep()` | [OpenCEP](https://opencep.com) | não | sim | sim |
-| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **sim** | não | sim |
+| Função | Serviço | Chave de API | Traz `complement` | Traz `ibgeCode` | Traz coordenadas |
+| --- | --- | --- | --- | --- | --- |
+| `viaCep()` | [ViaCEP](https://viacep.com.br) | não | sim | sim | não |
+| `brasilApi()` | [BrasilAPI](https://brasilapi.com.br) (CEP v2) | não | não | sim | sim |
+| `openCep()` | [OpenCEP](https://opencep.com) | não | sim | sim | não |
+| `awesomeApi()` | [AwesomeAPI](https://docs.awesomeapi.com.br/api-cep) | **sim** | não | sim | sim |
 
 O `defaultProviders()` devolve ViaCEP, BrasilAPI e OpenCEP, nessa ordem. A AwesomeAPI fica de fora
 porque precisa de chave de API: veja [Chave da AwesomeAPI](#chave-da-awesomeapi).
