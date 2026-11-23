@@ -233,6 +233,52 @@ describe('awesomeapi api key', () => {
   });
 });
 
+describe('defaultProviders order', () => {
+  const names = (order: string | string[], apiKeys?: { awesomeapi?: string }) =>
+    defaultProviders({ order, apiKeys }).map((provider) => provider.name);
+
+  it('puts the listed providers first and keeps the rest as fallback', () => {
+    expect(names('brasilapi')).toEqual(['brasilapi', 'viacep', 'opencep']);
+    expect(names('opencep,brasilapi')).toEqual(['opencep', 'brasilapi', 'viacep']);
+  });
+
+  it('accepts an array, ignores case and spaces, and drops duplicates', () => {
+    expect(names([' OpenCEP ', 'viacep', 'opencep'])).toEqual(['opencep', 'viacep', 'brasilapi']);
+  });
+
+  it('keeps the default order for an empty value', () => {
+    expect(names('')).toEqual(['viacep', 'brasilapi', 'opencep']);
+    expect(names([])).toEqual(['viacep', 'brasilapi', 'opencep']);
+  });
+
+  it('puts awesomeapi first when it is listed, even without a key', () => {
+    expect(names('awesomeapi')).toEqual(['awesomeapi', 'viacep', 'brasilapi', 'opencep']);
+  });
+
+  it('keeps awesomeapi last when only its key is given', () => {
+    expect(names('opencep', { awesomeapi: 'k' })).toEqual([
+      'opencep',
+      'viacep',
+      'brasilapi',
+      'awesomeapi',
+    ]);
+  });
+
+  it('rejects unknown provider names and lists the valid ones', () => {
+    expect(() => defaultProviders({ order: 'viacep,nope' })).toThrow(
+      /Unknown provider "nope".*viacep/,
+    );
+  });
+
+  it('still forwards the shared options to every provider', async () => {
+    const fetch = mockFetch(200, viaCepBody);
+    for (const provider of defaultProviders({ fetch, order: 'opencep' })) {
+      await provider.lookup(CEP, context()).catch(() => {});
+    }
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+});
+
 describe('defaultProviders', () => {
   it('returns viacep, brasilapi and opencep by default, with unique names', () => {
     const names = defaultProviders().map((provider) => provider.name);

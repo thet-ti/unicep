@@ -159,6 +159,13 @@ const unicep = new Unicep({
 });
 ```
 
+To pick the order from configuration, such as an environment variable, use `order`: the listed
+providers come first and the rest follow as fallback (names are case insensitive):
+
+```ts
+defaultProviders({ order: 'viacep,brasilapi' }); // ViaCEP, BrasilAPI, then OpenCEP
+```
+
 All built-in services send CORS headers, so they work from the browser.
 
 AwesomeAPI needs an API key: without one it may rate limit or reject requests, especially from
