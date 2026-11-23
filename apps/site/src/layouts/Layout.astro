@@ -5,6 +5,7 @@ import Brand from '../components/Brand.astro';
 import ExternalLinks from '../components/ExternalLinks.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import {
+  defaultLocale,
   htmlLang,
   languageNames,
   type Locale,
@@ -24,10 +25,18 @@ interface Props {
   current?: RouteName;
   /** Seconds between automatic reloads; omit to disable. */
   refreshSeconds?: number;
+  /** Structured data (schema.org) serialized as JSON-LD. */
+  jsonLd?: Record<string, unknown>;
 }
 
-const { locale, title, description, alternates, current, refreshSeconds } = Astro.props;
+const { locale, title, description, alternates, current, refreshSeconds, jsonLd } = Astro.props;
 const t = messages[locale];
+const ogLocale: Record<Locale, string> = { 'pt-br': 'pt_BR', en: 'en_US' };
+const absolute =(path: string) => new URL(path, Astro.site).href;
+const canonical = absolute(alternates[locale]);
+const ogImage = absolute('/thet-logo.png');
+// "<" is escaped so the payload can never close the script tag.
+const jsonLdText = jsonLd && JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 const nav: { name: RouteName; label: string }[] = [
   { name: 'docs', label: t.nav.docs },
   { name: 'status', label: t.nav.status },
@@ -45,6 +54,32 @@ const nav: { name: RouteName; label: string }[] = [
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <link rel="canonical" href={canonical} />
+    {
+      locales.map((code) => (
+        <link rel="alternate" hreflang={htmlLang[code]} href={absolute(alternates[code])} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={absolute(alternates[defaultLocale])} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="unicep" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={ogLocale[locale]} />
+    {
+      locales
+        .filter((code) => code !== locale)
+        .map((code) => (
+          <meta property="og:locale:alternate" content={ogLocale[code]} />
+        ))
+    }
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {jsonLdText && <script type="application/ld+json" set:html={jsonLdText} />}
   </head>
   <body>
     <header class="site-header">

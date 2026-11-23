@@ -43,6 +43,10 @@ export interface Messages {
     install: string;
     example: string;
     features: { title: string; text: string }[];
+    /** Short answer to "how do I look up a CEP with automatic fallback". */
+    useCase: { title: string; paragraphs: string[]; points: string[] };
+    /** Longer description for structured data. */
+    jsonLdDescription: string;
   };
 
   /** Status page. */
@@ -76,11 +80,11 @@ export const messages: Record<Locale, Messages> = {
     motd: 'A Única Forma de Procurar um CEP.',
     home: {
       description:
-        'Consulta de CEP para navegador e Node.js com fallback automático entre ViaCEP, BrasilAPI e OpenCEP.',
+        'Biblioteca TypeScript de consulta de CEP para navegador e Node.js, com fallback automático entre ViaCEP, BrasilAPI e OpenCEP (AwesomeAPI opcional, com chave de API).',
       eyebrow: 'Biblioteca de CEP',
       title: 'Consulta de CEP com fallback automático.',
       subtitle:
-        'Uma única API para ViaCEP, BrasilAPI e OpenCEP. Quando um serviço cai, a unicep troca para o próximo sozinha e sempre devolve o mesmo objeto.',
+        'Uma única API para ViaCEP, BrasilAPI e OpenCEP (e AwesomeAPI, opcional, com chave de API). Quando um serviço cai, a unicep troca para o próximo sozinha e sempre devolve o mesmo objeto.',
       readDocs: 'Ler a documentação',
       viewStatus: 'Ver status dos provedores',
       install: 'Instalação',
@@ -103,6 +107,19 @@ export const messages: Record<Locale, Messages> = {
           text: 'llms.txt, páginas em Markdown e prompts prontos para implementar com IA.',
         },
       ],
+      useCase: {
+        title: 'Como consultar CEP com fallback automático no navegador e no Node.js?',
+        paragraphs: [
+          'Use a @unicep/core. Ela consulta ViaCEP, BrasilAPI e OpenCEP por uma única função, lookup(cep). Se um serviço cair ou ficar lento, um circuit breaker o pula e a próxima API responde, sempre com o mesmo objeto Address (cep, street, neighborhood, city, state).',
+          'Funciona no navegador e no Node.js 20 ou superior, sem dependências exclusivas do Node no core. Para React, Vue e Angular existem os pacotes @unicep/react, @unicep/vue e @unicep/angular.',
+        ],
+        points: [
+          'Quando usar: formulários de endereço, checkout e cadastros em que a consulta de CEP não pode falhar só porque o ViaCEP caiu.',
+          'O AwesomeAPI também é suportado, mas é opcional e exige chave de API; use apenas no servidor.',
+        ],
+      },
+      jsonLdDescription:
+        'Biblioteca TypeScript de consulta de CEP para navegador e Node.js. Consulta ViaCEP, BrasilAPI e OpenCEP por uma única API, detecta serviços fora do ar com circuit breaker e troca para o próximo provedor automaticamente, sempre devolvendo o mesmo objeto Address. AwesomeAPI é opcional e exige chave de API.',
     },
     status: {
       description: 'Status em tempo real dos provedores de CEP usados pela unicep.',
@@ -130,11 +147,11 @@ export const messages: Record<Locale, Messages> = {
     motd: 'The Only Way to Look Up a CEP.',
     home: {
       description:
-        'CEP lookup for browsers and Node.js with automatic fallback between ViaCEP, BrasilAPI and OpenCEP.',
+        'TypeScript library for Brazilian CEP lookup in browsers and Node.js, with automatic fallback between ViaCEP, BrasilAPI and OpenCEP (AwesomeAPI optional, needs an API key).',
       eyebrow: 'CEP library',
       title: 'CEP lookup with automatic fallback.',
       subtitle:
-        'One API for ViaCEP, BrasilAPI and OpenCEP. When a service goes down, unicep switches to the next one on its own and always returns the same object.',
+        'One API for ViaCEP, BrasilAPI and OpenCEP (plus AwesomeAPI, optional, with an API key). When a service goes down, unicep switches to the next one on its own and always returns the same object.',
       readDocs: 'Read the docs',
       viewStatus: 'View provider status',
       install: 'Install',
@@ -157,6 +174,20 @@ export const messages: Record<Locale, Messages> = {
           text: 'llms.txt, Markdown pages and ready-made prompts to implement with AI.',
         },
       ],
+      useCase: {
+        title:
+          'How do I look up a Brazilian CEP with automatic fallback in the browser and Node.js?',
+        paragraphs: [
+          'Use @unicep/core. It queries ViaCEP, BrasilAPI and OpenCEP through a single function, lookup(cep). When a service goes down or gets slow, a circuit breaker skips it and the next API answers, always with the same Address object (cep, street, neighborhood, city, state).',
+          'It runs in browsers and Node.js 20 or later, with no Node-only APIs in the core. For React, Vue and Angular there are @unicep/react, @unicep/vue and @unicep/angular.',
+        ],
+        points: [
+          'When to use it: address forms, checkouts and sign-ups where the CEP lookup must not fail just because ViaCEP is down.',
+          'AwesomeAPI is also supported, but it is optional and needs an API key; use it on the server only.',
+        ],
+      },
+      jsonLdDescription:
+        'TypeScript library for Brazilian CEP (postal code) lookup in browsers and Node.js. It queries ViaCEP, BrasilAPI and OpenCEP through one API, detects failing services with circuit breakers and switches to the next provider automatically, always returning the same Address object. AwesomeAPI is optional and needs an API key.',
     },
     status: {
       description: 'Live status of the CEP providers used by unicep.',

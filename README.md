@@ -13,6 +13,13 @@ Public CEP services (ViaCEP, BrasilAPI, OpenCEP, ...) go down from time to time.
 several providers behind a single interface, detects failing services with circuit breakers and
 transparently falls back to the next one, always returning the same normalized `Address`.
 
+## When to use it
+
+Use `unicep` to look up a Brazilian CEP with automatic fallback in the browser and in Node.js:
+address forms, checkouts and sign-ups where the lookup must not fail just because ViaCEP is down.
+It ships ViaCEP, BrasilAPI and OpenCEP by default, plus AwesomeAPI as an opt-in provider (it needs
+an API key), and has bindings for React, Vue and Angular.
+
 ## Packages
 
 | Package                               | Description                                               |

@@ -4,6 +4,14 @@ Brazilian postal code (CEP) lookup for browsers and Node.js. It queries several 
 behind one interface, detects failing ones with circuit breakers and falls back to the next
 one, always returning the same normalized `Address`.
 
+## When to use it
+
+Use `@unicep/core` to look up a Brazilian CEP with automatic fallback in the browser and in
+Node.js: address forms, checkouts and sign-ups where the lookup must not fail just because
+ViaCEP is down. When a service fails or is slow, a circuit breaker skips it and BrasilAPI or
+OpenCEP answers instead. The result is always the same `Address` object, so your code never
+depends on one provider's response format.
+
 **Documentation:** [unicep.thet.dev](https://unicep.thet.dev) (Portuguese and English) · [provider status](https://unicep.thet.dev/status)
 
 - Framework-agnostic, written in TypeScript, ESM and CJS.
