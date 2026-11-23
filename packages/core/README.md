@@ -71,6 +71,20 @@ unicep.status();
 // [{ name: 'viacep', circuit: 'closed' }, { name: 'brasilapi', circuit: 'open' }, ...]
 ```
 
+## Last resort
+
+By default a provider with an open circuit is skipped right away, so lookups can fail for up to
+`resetTimeoutMs` even if the service is already back. With `lastResort`, a lookup that did not
+succeed still tries the skipped providers (in priority order), bypassing their breakers. A success
+closes that provider's circuit, and if everything fails the error carries each real reason:
+
+```ts
+const unicep = new Unicep({
+  providers: defaultProviders(),
+  circuitBreaker: { failureThreshold: 2, resetTimeoutMs: 60_000, lastResort: true },
+});
+```
+
 ## Retry
 
 By default a failing provider is skipped right away and the next one is tried. To also retry the

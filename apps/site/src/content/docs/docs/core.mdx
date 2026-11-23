@@ -52,6 +52,23 @@ interface Address {
 }
 ```
 
+## Circuito aberto como último recurso
+
+Por padrão, um provider com o circuito aberto é pulado na hora, e a consulta pode falhar por até
+`resetTimeoutMs` mesmo que o serviço já tenha voltado. Se você prefere nunca bloquear o usuário,
+ligue o `lastResort`:
+
+```ts
+const unicep = new Unicep({
+  providers: defaultProviders(),
+  circuitBreaker: { failureThreshold: 2, resetTimeoutMs: 60_000, lastResort: true },
+});
+```
+
+Com ele, quando a consulta não deu certo, a unicep ainda tenta os providers que foram pulados (na
+ordem de prioridade), sem passar pelo circuit breaker. Se um deles responder, o circuito dele
+fecha. Se todos falharem, o erro traz o motivo real de cada um, e não "circuito aberto".
+
 ## Retry
 
 Por padrão, um provider que falha é pulado na hora. Para repetir o mesmo provider antes de passar

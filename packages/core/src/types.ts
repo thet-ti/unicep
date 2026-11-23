@@ -40,6 +40,12 @@ export interface CircuitBreakerOptions {
   failureThreshold?: number;
   /** Milliseconds an open circuit waits before allowing a trial request. Default: 30000. */
   resetTimeoutMs?: number;
+  /**
+   * When a lookup fails, still try the providers that were skipped because their circuit is
+   * open, as a last resort and in priority order. A success closes that provider's circuit.
+   * Without it, open circuits fail fast and the user waits for `resetTimeoutMs`. Default: false.
+   */
+  lastResort?: boolean;
 }
 
 export interface RetryOptions {
