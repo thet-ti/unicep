@@ -1,5 +1,19 @@
 # @unicep/react
 
+## 0.2.0
+
+### Minor Changes
+
+- 2201046: Add `UnicepProvider` and `useUnicep()`, so a configured `Unicep` instance can be shared through React context and used for imperative lookups. `useCep` now uses the provided instance by default.
+
+### Patch Changes
+
+- Updated dependencies [3fd6ba4]
+- Updated dependencies [1a54599]
+- Updated dependencies [21610cc]
+- Updated dependencies [07ebb24]
+  - @unicep/core@0.3.0
+
 ## 0.1.2
 
 ### Patch Changes

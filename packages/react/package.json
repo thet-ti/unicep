@@ -1,6 +1,6 @@
 {
   "name": "@unicep/react",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "React hook for @unicep/core",
   "license": "MIT",
   "repository": {
