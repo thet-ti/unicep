@@ -12,3 +12,4 @@ coverage
 !.vscode/settings.json
 .idea
 .astro
+.vercel

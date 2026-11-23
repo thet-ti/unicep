@@ -55,6 +55,12 @@ interface Target {
  * Probes every provider through its own `Unicep` instance, so the circuit breaker state shown on
  * the page is the real one the library would use. Results are cached and shared, and concurrent
  * requests share one in-flight check, so public traffic never multiplies calls to the services.
+ *
+ * On serverless hosting (Vercel) the snapshot and circuit state live in the memory of a function
+ * instance: they are shared by requests that hit the same warm instance and reset on a cold
+ * start. The status page also sends `s-maxage=60`, so the CDN is the main cache and instances
+ * rarely probe more than about once a minute. The circuit shown is therefore a best effort view
+ * of the recent probes, not a long lived history.
  */
 export function createStatusService(options: StatusServiceOptions = {}) {
   const { cacheMs = 60_000, timeoutMs = 5_000, now = Date.now, awesomeApiKey, ...http } = options;
@@ -161,6 +167,6 @@ export function createStatusService(options: StatusServiceOptions = {}) {
 
 /** Shared instance used by the page. */
 export const { getStatus } = createStatusService({
-  // Set on the server (Render environment variable); never exposed to the browser.
+  // Set on the server (Vercel environment variable); never exposed to the browser.
   awesomeApiKey: process.env.AWESOMEAPI_KEY || undefined,
 });

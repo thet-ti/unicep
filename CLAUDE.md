@@ -63,25 +63,30 @@ Apps live in `apps/*` and are private (never published, ignored by changesets):
 | `@unicep/site` | Astro site: home, Starlight documentation and the provider status page |
 
 The site (`apps/site`) uses Astro 7, which needs Node >= 22.23.4 (the libraries themselves only
-need Node >= 20), and deploys to Render (`render.yaml`, Node adapter).
+need Node >= 20), and deploys to Vercel (`@astrojs/vercel`, project Root Directory `apps/site`, `apps/site/vercel.json`
+builds from the workspace root). Output is static; only `/status` and `/en/status` are server
+rendered (`prerender = false`).
 
 - **Routes:** home at `/`, status at `/status`, documentation at `/docs/*`. Portuguese is the
   default language (the library is Brazilian) and English lives under `/en/`. Chrome and status
   copy is in `src/i18n/ui.ts`; documentation pages are MDX in `src/content/docs/docs` (pt-BR) and
   `src/content/docs/en/docs` (English). Keep both languages in sync when changing a page.
 - **Status page:** probes each provider through its own `Unicep` instance (so the circuit state is
-  the real one) and shares one snapshot between visitors for 60 seconds.
+  the real one) and shares one snapshot between visitors for 60 seconds. On Vercel that state lives in a function
+  instance (reset on cold start); the response's `s-maxage=60` makes the CDN the main cache.
 - **Agent friendly docs:** `starlight-llms-txt` generates `/llms.txt`, `/llms-full.txt` (default
   language only; English has its own set at `/_llms-txt/english.txt`) and `starlight-page-actions`
   adds the copy-as-Markdown and open-in-Claude/ChatGPT buttons and serves each page as `.md`. The
   `AiPrompt` component renders ready-made prompts per framework (`src/lib/prompts.ts`).
 - **Look:** the .thet identity everywhere, including Starlight (`src/styles`): pure black, neutral
   grays and magenta only on the brand marks. The site is dark only.
-- **Environment:** `SITE_URL` (public address, defaults to Render's `RENDER_EXTERNAL_URL`, then
-  localhost) feeds `llms.txt` and the sitemap. `AWESOMEAPI_KEY` (secret, set in the Render
-  dashboard) is sent to AwesomeAPI by the status page, because that service rejects anonymous
-  requests from Render's network. It is only ever used server side. Without it the status page
-  still lists AwesomeAPI, tagged "API key required" and not probed.
+- **Environment:** `SITE_URL` (public address; falls back to Vercel's
+  `VERCEL_PROJECT_PRODUCTION_URL`, then `VERCEL_URL`, then localhost) feeds `llms.txt` and the
+  sitemap. `AWESOMEAPI_KEY` (secret, set in the Vercel project's environment variables) is sent to
+  AwesomeAPI by the status page, because that service rejects anonymous requests from cloud
+  hosts. It is only ever used server side. Without it the status page still lists AwesomeAPI,
+  tagged "API key required" and not probed. Node >= 22.23.4 comes from `engines` in
+  `apps/site/package.json`.
 - **Default providers:** `defaultProviders()` is ViaCEP, BrasilAPI and OpenCEP. AwesomeAPI needs an
   API key, so it is opt-in (`awesomeApi({ apiKey })` or `defaultProviders({ apiKeys })`), and every
   place that lists it (docs, READMEs, status page) must say that it needs a key.

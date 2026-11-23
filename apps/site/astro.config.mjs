@@ -1,16 +1,20 @@
-import node from '@astrojs/node';
 import starlight from '@astrojs/starlight';
+import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightPageActions from 'starlight-page-actions';
 
-// Absolute URLs (llms.txt, sitemap) need the public address. Render exposes it automatically.
-const site = process.env.SITE_URL ?? process.env.RENDER_EXTERNAL_URL ?? 'http://localhost:4321';
+// Absolute URLs (llms.txt, sitemap) need the public address. SITE_URL wins; otherwise use the
+// hostnames Vercel exposes (without protocol): the production domain, then the deployment URL.
+const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+const site =
+  process.env.SITE_URL ?? (vercelHost ? `https://${vercelHost}` : 'http://localhost:4321');
 
 export default defineConfig({
   site,
-  output: 'server',
-  adapter: node({ mode: 'standalone' }),
+  // Static by default; only the status pages opt out with `export const prerender = false`.
+  output: 'static',
+  adapter: vercel(),
   server: { host: true },
   integrations: [
     starlight({

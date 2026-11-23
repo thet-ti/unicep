@@ -55,12 +55,13 @@ Two GitHub Actions workflows ship the project. Both run on pushes to `main`.
 3. Merging that pull request publishes the new versions of `@unicep/*` to npm with provenance
    and creates the GitHub releases.
 
-**Site: documentation and status page** (`render.yaml`)
+**Site: documentation and status page** (`apps/site/vercel.json`)
 
-Render deploys the site through its GitHub integration. After a push to `main`, it waits for the
-CI checks to pass (`autoDeployTrigger: checksPass`) and rebuilds only when the site, the core
-package or the workspace configuration changed (`buildFilter`). There is no deploy workflow and no
-deploy secret. To set it up, create a Blueprint in Render from this repository.
+Vercel deploys the site through its GitHub integration: pushes to `main` go to production and
+pull requests get preview deployments. The project uses `apps/site` as its Root Directory, and
+`vercel.json` installs and builds from the workspace root (the site needs `@unicep/core` built
+first). There is no deploy workflow and no deploy secret. Set `AWESOMEAPI_KEY` (and optionally
+`SITE_URL`) in the project's environment variables.
 
 Publishing uses npm trusted publishing (GitHub OIDC), so there is no npm token. Each `@unicep/*`
 package has a trusted publisher configured on npmjs.com (_package → Settings → Trusted Publisher_)

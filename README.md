@@ -97,8 +97,9 @@ pnpm --filter @unicep/site dev
 ```
 
 Set `SITE_URL` to the public address of the site so `llms.txt` and the sitemap use absolute URLs
-(Render provides it automatically). A [Render](https://render.com) blueprint is included in
-[`render.yaml`](render.yaml).
+(on Vercel it falls back to the project's own URL). The site deploys to
+[Vercel](https://vercel.com) with `apps/site` as the Root Directory; see
+[`apps/site/vercel.json`](apps/site/vercel.json).
 
 ## Development
 
