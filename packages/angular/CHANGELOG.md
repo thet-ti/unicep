@@ -1,5 +1,15 @@
 # @unicep/angular
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [3fd6ba4]
+- Updated dependencies [1a54599]
+- Updated dependencies [21610cc]
+- Updated dependencies [07ebb24]
+  - @unicep/core@0.3.0
+
 ## 0.1.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@unicep/angular",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Angular (signals and RxJS) bindings for @unicep/core",
   "license": "MIT",
   "repository": {
