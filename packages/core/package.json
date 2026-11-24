@@ -1,7 +1,7 @@
 {
   "name": "@unicep/core",
   "version": "0.3.0",
-  "description": "Brazilian CEP lookup with automatic provider fallback and circuit breakers",
+  "description": "Brazilian CEP (postal code) lookup for browsers and Node.js with automatic fallback between ViaCEP, BrasilAPI and OpenCEP using circuit breakers",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -19,7 +19,12 @@
     "viacep",
     "brasilapi",
     "circuit-breaker",
-    "fallback"
+    "fallback",
+    "cep-lookup",
+    "consulta-cep",
+    "zip-code",
+    "address",
+    "typescript"
   ],
   "type": "module",
   "sideEffects": false,

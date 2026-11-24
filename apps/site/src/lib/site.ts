@@ -4,4 +4,5 @@ import corePackage from '@unicep/core/package.json';
 export const version: string = corePackage.version;
 export const repositoryUrl = 'https://github.com/thet-ti/unicep';
 export const npmUrl = `https://www.npmjs.com/package/@unicep/core/v/${version}`;
+export const npmPackageUrl = 'https://www.npmjs.com/package/@unicep/core';
 export const thetUrl = 'https://thet.dev';

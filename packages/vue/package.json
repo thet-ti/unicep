@@ -19,7 +19,12 @@
     "viacep",
     "brasilapi",
     "circuit-breaker",
-    "fallback"
+    "fallback",
+    "cep-lookup",
+    "consulta-cep",
+    "zip-code",
+    "address",
+    "typescript"
   ],
   "type": "module",
   "sideEffects": false,
