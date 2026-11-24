@@ -47,6 +47,8 @@ export interface Messages {
     useCase: { title: string; paragraphs: string[]; points: string[] };
     /** Longer description for structured data. */
     jsonLdDescription: string;
+    /** Buttons that send a ready-made prompt to an AI assistant. */
+    ai: { label: string; claude: string; chatgpt: string };
   };
 
   /** Status page. */
@@ -120,6 +122,11 @@ export const messages: Record<Locale, Messages> = {
       },
       jsonLdDescription:
         'Biblioteca TypeScript de consulta de CEP para navegador e Node.js. Consulta ViaCEP, BrasilAPI e OpenCEP por uma única API, detecta serviços fora do ar com circuit breaker e troca para o próximo provedor automaticamente, sempre devolvendo o mesmo objeto Address. AwesomeAPI é opcional e exige chave de API.',
+      ai: {
+        label: 'Implementar com IA:',
+        claude: 'Implementar com Claude',
+        chatgpt: 'Implementar com ChatGPT',
+      },
     },
     status: {
       description: 'Status em tempo real dos provedores de CEP usados pela unicep.',
@@ -188,6 +195,11 @@ export const messages: Record<Locale, Messages> = {
       },
       jsonLdDescription:
         'TypeScript library for Brazilian CEP (postal code) lookup in browsers and Node.js. It queries ViaCEP, BrasilAPI and OpenCEP through one API, detects failing services with circuit breakers and switches to the next provider automatically, always returning the same Address object. AwesomeAPI is optional and needs an API key.',
+      ai: {
+        label: 'Implement with AI:',
+        claude: 'Implement with Claude',
+        chatgpt: 'Implement with ChatGPT',
+      },
     },
     status: {
       description: 'Live status of the CEP providers used by unicep.',
