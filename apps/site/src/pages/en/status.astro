@@ -1,10 +1,13 @@
 ---
+// The only server rendered pages: the snapshot must be live.
+export const prerender = false;
+
 import StatusPage from '../../components/StatusPage.astro';
 import { getStatus } from '../../lib/status';
 
 const status = await getStatus();
 
-// Shared between visitors; the server also caches the snapshot for 60 seconds.
+// Shared between visitors; each function instance also keeps the snapshot for 60 seconds.
 Astro.response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60');
 ---
 

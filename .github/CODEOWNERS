@@ -6,7 +6,6 @@
 
 # CI/CD, release and deploy configuration
 /.github/ @Ellathet
-/render.yaml @Ellathet
 /.changeset/ @Ellathet
 
 # Dependencies and build configuration
