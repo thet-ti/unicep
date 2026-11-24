@@ -1,5 +1,13 @@
 # @unicep/angular
 
+## 0.1.4
+
+### Patch Changes
+
+- 7130368: Improve npm discoverability: richer keywords, a clearer package description and a "when to use it" section in the README.
+- Updated dependencies [7130368]
+  - @unicep/core@0.3.1
+
 ## 0.1.3
 
 ### Patch Changes

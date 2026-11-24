@@ -1,5 +1,11 @@
 # @unicep/core
 
+## 0.3.1
+
+### Patch Changes
+
+- 7130368: Improve npm discoverability: richer keywords, a clearer package description and a "when to use it" section in the README.
+
 ## 0.3.0
 
 ### Minor Changes
