@@ -39,8 +39,18 @@ export interface StatusServiceOptions extends HttpProviderOptions {
   cacheMs?: number;
   /** Probe timeout per provider. Default: 5000. */
   timeoutMs?: number;
+  /** Timed probes per provider after one warm-up request; the median is reported. Default: 3. */
+  samples?: number;
   /** Clock, for tests. */
   now?: () => number;
+}
+
+function median(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? (sorted[mid] as number)
+    : ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2;
 }
 
 interface Target {
@@ -57,7 +67,14 @@ interface Target {
  * requests share one in-flight check, so public traffic never multiplies calls to the services.
  */
 export function createStatusService(options: StatusServiceOptions = {}) {
-  const { cacheMs = 60_000, timeoutMs = 5_000, now = Date.now, awesomeApiKey, ...http } = options;
+  const {
+    cacheMs = 60_000,
+    timeoutMs = 5_000,
+    samples = 3,
+    now = Date.now,
+    awesomeApiKey,
+    ...http
+  } = options;
 
   const targets: Target[] = [
     {
@@ -115,15 +132,30 @@ export function createStatusService(options: StatusServiceOptions = {}) {
       };
     }
 
-    const start = performance.now();
+    // The probe CEP exists everywhere, so any error means the service is not working.
     let online = true;
     try {
+      // Warm-up: pays for DNS, the TCP/TLS handshake and cold starts, so they are not reported as
+      // the service's latency. Its time is discarded.
       await unicep.lookup(PROBE_CEP);
     } catch {
-      // The probe CEP exists everywhere, so any error means the service is not working.
       online = false;
     }
-    const latencyMs = online ? Math.round(performance.now() - start) : null;
+
+    // Timed probes run one after another on the warm connection; the median hides one-off spikes.
+    const timings: number[] = [];
+    while (online && timings.length < samples) {
+      const start = performance.now();
+      try {
+        await unicep.lookup(PROBE_CEP);
+        timings.push(performance.now() - start);
+      } catch {
+        // Stop probing a service that just failed; keep what was measured so far.
+        break;
+      }
+    }
+    online = timings.length > 0;
+    const latencyMs = online ? Math.round(median(timings)) : null;
     return {
       id: target.id,
       name: target.name,

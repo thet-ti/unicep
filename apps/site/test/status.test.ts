@@ -75,8 +75,9 @@ describe('status service', () => {
     const withToken = fetch.mock.calls
       .map((call) => String(call[0]))
       .filter((u) => u.includes('token='));
-    expect(withToken).toHaveLength(1);
-    expect(withToken[0]).toContain('awesomeapi');
+    // Warm-up plus three timed samples, all to AwesomeAPI and nowhere else.
+    expect(withToken).toHaveLength(4);
+    expect(withToken.every((u) => u.includes('awesomeapi'))).toBe(true);
   });
 
   it('marks a failing provider offline without a latency', async () => {
@@ -126,6 +127,32 @@ describe('status service', () => {
     const [a, b, c] = await Promise.all([getStatus(), getStatus(), getStatus()]);
     expect(a).toBe(b);
     expect(b).toBe(c);
-    expect(fetch).toHaveBeenCalledTimes(3);
+    // 3 providers, each probed once for warm-up plus 3 timed samples.
+    expect(fetch).toHaveBeenCalledTimes(3 * 4);
+  });
+
+  it('ignores a slow warm-up and reports the median of the timed samples', async () => {
+    const delays = [400, 10, 30, 20]; // warm-up, then three samples: median is 20
+    let viaCepCalls = 0;
+    const base = fakeFetch();
+    const slowFetch = vi.fn<typeof fetch>(async (input, init) => {
+      if (String(input).includes('viacep')) {
+        await new Promise((resolve) => setTimeout(resolve, delays[viaCepCalls++] ?? 0));
+      }
+      return base(input, init);
+    });
+    const { getStatus } = createStatusService({ fetch: slowFetch });
+    const viacep = (await getStatus()).providers.find((p) => p.id === 'viacep');
+    expect(viaCepCalls).toBe(4);
+    expect(viacep?.latencyMs).toBeGreaterThanOrEqual(20);
+    expect(viacep?.latencyMs).toBeLessThan(200);
+  });
+
+  it('stops probing a failing provider after the warm-up', async () => {
+    const fetch = fakeFetch(['brasilapi']);
+    const { getStatus } = createStatusService({ fetch });
+    await getStatus();
+    const brasilCalls = fetch.mock.calls.filter((c) => String(c[0]).includes('brasilapi'));
+    expect(brasilCalls).toHaveLength(1);
   });
 });
